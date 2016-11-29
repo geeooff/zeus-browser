@@ -1,5 +1,5 @@
 # Zeus Browser
-Mainly a **basic** lightweight read-only file browser, coded in PHP, without too much extensions dependencies.
+Mainly a **basic** lightweight read-only web file browser, coded in PHP, without too much dependencies.
 
 # Features
 * Preview of
@@ -11,11 +11,8 @@ Mainly a **basic** lightweight read-only file browser, coded in PHP, without too
     * admin
     * guest
 
-# On client-side
-* Bootstrap 3 (with bootswatch theme)
-* jQuery 2
-
 # Roadmap
 * Rewrite of authentication system
-* Keep per-folder orders and filters
-* Browse in archive files, like a folder
+* Add previous/next folder/file navigation
+* Add per-folder ordering and filtering, and remember it
+* Browse inside archive files, like a folder
