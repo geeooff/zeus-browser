@@ -178,16 +178,29 @@ class FileSystemObject
 				break;
 
 			case MediaInfoFormat::Xml:
+			case MediaInfoFormat::Html:
 				exec('/usr/bin/mediainfo --Output=XML ' . escapeshellarg($this->realpath), $output, $exitcode);
 				break;
 
-			case MediaInfoFormat::Html:
-				exec('/usr/bin/mediainfo --Output=XML ' . escapeshellarg($this->realpath) . ' | /usr/bin/xsltproc --nonet --nowrite --nomkdir mediainfo.xsl -', $output, $exitcode);
-				break;
+			//case MediaInfoFormat::Html:
+			//	exec('/usr/bin/mediainfo --Output=XML ' . escapeshellarg($this->realpath) . ' | /usr/bin/xsltproc --nonet --nowrite --nomkdir mediainfo.xsl -', $output, $exitcode);
+			//	break;
 		}
 
 		if ($exitcode === 0)
-			return implode(PHP_EOL, $output);
+			if ($format == MediaInfoFormat::Html)
+			{
+				$output = implode(PHP_EOL, $output);
+				$xml = new DOMDocument();
+				$xml.load($output);
+				$xsl = new DOMDocument();
+				$xsl.load('mediainfo.xsl');
+				$proc = new XSLTProcessor;
+				$proc->importStyleSheet($xsl);
+				$output = $proc->transformToXML($xml);
+			}
+			else
+				return implode(PHP_EOL, $output);
 		else
 			return FALSE;
 	}
