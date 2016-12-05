@@ -1,7 +1,6 @@
 <?php
 
 isset($end) or die(':P');
-include_once('../dl-res/_object.inc.php');
 
 $https = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on');
 $securelink = $end->GetSecureLink();
@@ -88,8 +87,3 @@ $httpsSecureLink = $end->GetSecureLink($scheme = 'https'); //$https ? $securelin
 				</div>				
 			</div>
 			<?php endif; ?>
-<?php
-
-include('../dl-res/_footer.inc.php');
-
-?>

@@ -1,7 +1,7 @@
 <?php
 
 isset($end) or die(':P');
-include('../dl-res/_header.inc.php');
+$isInCart = $end->exists ? $cart->Contains($end) : FALSE;
 
 ?>
 		<div class="jumbotron">
@@ -92,8 +92,6 @@ include('../dl-res/_header.inc.php');
 									echo '<a href="', $end->path, '" download class="btn btn-primary" role="button"><span class="glyphicon glyphicon-save"></span> <span class="hidden-xs">Télécharger</span></a>', "\r\n";
 									echo '<a href="?url" type="text/plain" class="btn btn-primary" role="button"><span class="glyphicon glyphicon-list"></span> <span class="hidden-xs">URL</span></a>', "\r\n";
 								}
-
-								$isInCart = $cart->Contains($end);
 
 								if ($isInCart)
 									echo '<a href="?removefromcart" type="application/json" class="btn btn-danger removefromcart" role="button"><span class="glyphicon glyphicon-shopping-cart"></span> <span class="hidden-xs">Retirer</span></a>', "\r\n";

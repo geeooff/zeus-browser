@@ -175,21 +175,21 @@ class FileSystemObject
 		{
 			case MediaInfoFormat::Text:
 				exec('/usr/bin/mediainfo ' . escapeshellarg($this->realpath), $output, $exitcode);
-				return implode(PHP_EOL, $output);
 				break;
 
 			case MediaInfoFormat::Xml:
 				exec('/usr/bin/mediainfo --Output=XML ' . escapeshellarg($this->realpath), $output);
-				return implode(PHP_EOL, $output);
 				break;
 
 			case MediaInfoFormat::Html:
 				exec('/usr/bin/mediainfo --Output=XML ' . escapeshellarg($this->realpath) . ' | /usr/bin/xsltproc --nonet --nowrite --nomkdir mediainfo.xsl -', $output, $exitcode);
-				return implode(PHP_EOL, $output);
 				break;
 		}
 
-		return FALSE;
+		if ($exitcode === 0)
+			return implode(PHP_EOL, $output);
+		else
+			return FALSE;
 	}
 
 	public function GetAllText(&$encoding = NULL)
@@ -298,6 +298,12 @@ class FileSystemObjectBuilder
 		$path = $userIsAdmin ? $config['PATH_ADMIN'] : $config['PATH_GUEST'];
 		$securepath = $userIsAdmin ? $config['SECURE_PATH_ADMIN'] : $config['SECURE_PATH_GUEST'];
 		$cartSessionName = $userIsAdmin ? $config['session']['name-admin'] : $config['session']['name-guest'];
+
+		// resolves root path, if not specified in config file
+		if ($root == NULL || trim($root) == '')
+		{
+			$root = $_SERVER['DOCUMENT_ROOT'] . $path;
+		}
 
 		$baseurl = [
 			'scheme' => ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? 'https' : 'http'),
@@ -849,5 +855,45 @@ function total_size($files)
 	}
 	return $size;
 }
+
+function http_die(string $message, int $http_reponse_code = 500)
+{
+	header('Content-Type: text/plain', TRUE, $http_reponse_code);
+	return die($message);
+}
+
+// Source: http://stackoverflow.com/questions/2637945/getting-relative-path-from-absolute-path-in-php
+/*function getRelativePath($from, $to)
+{
+    // some compatibility fixes for Windows paths
+    $from = is_dir($from) ? rtrim($from, '\/') . '/' : $from;
+    $to   = is_dir($to)   ? rtrim($to, '\/') . '/'   : $to;
+    $from = str_replace('\\', '/', $from);
+    $to   = str_replace('\\', '/', $to);
+
+    $from     = explode('/', $from);
+    $to       = explode('/', $to);
+    $relPath  = $to;
+
+    foreach($from as $depth => $dir) {
+        // find first non-matching dir
+        if($dir === $to[$depth]) {
+            // ignore this directory
+            array_shift($relPath);
+        } else {
+            // get number of remaining dirs to $from
+            $remaining = count($from) - $depth;
+            if($remaining > 1) {
+                // add traversals up to first matching dir
+                $padLength = (count($relPath) + $remaining - 1) * -1;
+                $relPath = array_pad($relPath, $padLength, '..');
+                break;
+            } else {
+                $relPath[0] = './' . $relPath[0];
+            }
+        }
+    }
+    return implode('/', $relPath);
+}*/
 
 ?>

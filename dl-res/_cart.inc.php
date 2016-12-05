@@ -1,7 +1,6 @@
 <?php
 
 isset($builder) && isset($cart) or die(':P');
-include_once('../dl-res/_header.inc.php');
 
 ?>
 		<div class="jumbotron">
@@ -84,7 +83,5 @@ include_once('../dl-res/_header.inc.php');
 echo '<div class="cart cart-full">';
 $cart->GetFullHtml();
 echo '</div>';
-
-include('../dl-res/_footer.inc.php');
 
 ?>

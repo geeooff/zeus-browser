@@ -121,13 +121,16 @@ $(document).ready(function(){
 			"dataType": format,
 			"url": "?mediainfo&format=" + format,
 			"success": function(data, textStatus, jqXHR){
+				$this.removeClass("text-danger");
 				if (format === "html")
 					$this.html(data);
 				else
 					$this.text(data);
 			},
 			"error": function(jqXHR, textStatus, errorThrown){
-				window.alert("".concat("Impossible de récupérer les infos du média (", textStatus, ", ", errorThrown, ")."));
+				var errorMessage = jqXHR.responseText || textStatus;
+				window.alert("".concat("Impossible de récupérer les infos du média (", errorMessage, ")."));
+				$this.text(errorMessage).addClass("text-danger");
 			}
 		});
 	});

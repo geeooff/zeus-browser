@@ -12,7 +12,9 @@ putenv('LC_ALL=' . LOCALE);
 
 $config = parse_ini_file('config.ini', $process_sections = TRUE, $scanner_mode = INI_SCANNER_TYPED);
 
-require_once('_global.inc.php');
+require_once '_global.inc.php';
+
+extension_loaded('intl') or http_die('intl extension must be installed');
 
 $builder = new FileSystemObjectBuilder($config);
 $cart = $builder->GetCart();
@@ -35,7 +37,7 @@ else if (isset($_GET['xml']))
 {
 	error_reporting(E_ALL ^ E_STRICT ^ E_DEPRECATED);
 	header('Content-Type: application/xml; charset=utf-8', TRUE);
-	require_once('XML/Serializer.php');
+	require_once 'XML/Serializer.php';
 	$serializer = new XML_Serializer([
 		'indent'          => "\t",
 		'linebreak'       => "\r\n",
@@ -61,17 +63,17 @@ else if (isset($_GET['mediainfo']))
 		{
 			case 'text':
 				header('Content-Type: text/plain; charset=utf-8', TRUE);
-				echo $end->GetMediaInfo(MediaInfoFormat::Text);
+				echo $end->GetMediaInfo(MediaInfoFormat::Text) or http_die("MediaInfo failure");
 				break;
 
 			case 'xml':
 				header('Content-Type: application/xml; charset=utf-8', TRUE);
-				echo $end->GetMediaInfo(MediaInfoFormat::Xml);
+				echo $end->GetMediaInfo(MediaInfoFormat::Xml) or http_die("MediaInfo failure");
 				break;
 
 			case 'html':
 				header('Content-Type: text/html; charset=utf-8', TRUE);
-				echo $end->GetMediaInfo(MediaInfoFormat::Html);
+				echo $end->GetMediaInfo(MediaInfoFormat::Html) or http_die("MediaInfo failure");
 				break;
 
 			default:
@@ -183,25 +185,29 @@ else
 	header('X-UA-Compatible: IE=edge,chrome=1', TRUE);
 	header('Content-Type: text/html; charset=utf-8', TRUE);
 	
+	include_once '../dl-res/_header.inc.php';
+	include_once '../dl-res/_object.inc.php';
+
 	if (isset($_GET['cart']))
 	{
 		$cart->GetObjects();
 		$allFiles = $cart->GetAllFiles();
-		include_once('../dl-res/_cart.inc.php');
+		include_once '../dl-res/_cart.inc.php';
 	}
-	else if (!$end->exists)
+	else if ($end->exists)
 	{
-		include_once('../dl-res/_object.inc.php');
+		if ($end->isdir)
+		{
+			$end->GetChildren();
+			include_once '../dl-res/_dir.inc.php';
+		}
+		else if ($end->isfile)
+		{
+			include_once '../dl-res/_file.inc.php';
+		}
 	}
-	else if ($end->isdir)
-	{
-		$end->GetChildren();
-		include_once('../dl-res/_dir.inc.php');
-	}
-	else if ($end->isfile)
-	{
-		include_once('../dl-res/_file.inc.php');
-	}
+
+	include_once '../dl-res/_footer.inc.php';
 }
 
 ?>

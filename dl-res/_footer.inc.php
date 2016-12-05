@@ -1,3 +1,4 @@
+<?php isset($config) or die(':P'); ?>
 		</div>
 		<!--<div id="modal-urls" class="modal fade" tabindex="-1" role="dialog">
 			<div class="modal-dialog">

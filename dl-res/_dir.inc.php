@@ -1,7 +1,6 @@
 <?php
 
 isset($end) or die(':P');
-include_once('../dl-res/_object.inc.php');
 
 ?>
 			<div class="row">
@@ -44,8 +43,3 @@ include_once('../dl-res/_object.inc.php');
 					<?php endif; ?>
 				</div>
 			</div>
-<?php
-
-include('../dl-res/_footer.inc.php');
-
-?>
