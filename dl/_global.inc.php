@@ -178,7 +178,7 @@ class FileSystemObject
 				break;
 
 			case MediaInfoFormat::Xml:
-				exec('/usr/bin/mediainfo --Output=XML ' . escapeshellarg($this->realpath), $output);
+				exec('/usr/bin/mediainfo --Output=XML ' . escapeshellarg($this->realpath), $output, $exitcode);
 				break;
 
 			case MediaInfoFormat::Html:
