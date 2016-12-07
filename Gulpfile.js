@@ -1,35 +1,35 @@
 'use strict';
 
 var autoprefixer = require('autoprefixer'),
-    cleancss = require('postcss-clean'),
-    del = require('del'),
-    gulp = require('gulp'),
-    gulpSequence = require('gulp-sequence'),
-    merge = require('merge-stream'),
-    postcss = require('gulp-postcss'),
-    rename = require('gulp-rename'),
+	cleancss = require('postcss-clean'),
+	del = require('del'),
+	gulp = require('gulp'),
+	gulpSequence = require('gulp-sequence'),
+	merge = require('merge-stream'),
+	postcss = require('gulp-postcss'),
+	rename = require('gulp-rename'),
 	sass = require('gulp-sass'),
 	sourcemaps = require('gulp-sourcemaps'),
 	uglify = require('gulp-uglify')
 
 var src = {
-    sass: [
-        'dl-res/css/main.scss'
-    ],
-    js: [
-        'dl-res/js/main.js'
-    ]
+	sass: [
+		'dl-res/css/main.scss'
+	],
+	js: [
+		'dl-res/js/main.js'
+	]
 };
 var dest = {
-    css: 'tests/css',
-    js: 'tests/js'
+	css: 'tests/css',
+	js: 'tests/js'
 }
 
 var autoprefixerOptions = {
 	browsers: [
 		'last 1 version',
-        '> 10%',
-        'not ie <= 11'
+		'> 10%',
+		'not ie <= 11'
 	]
 };
 
@@ -85,29 +85,29 @@ var watcherOnChange = function (event) {
 gulp.task('default', ['css', 'js']);
 
 gulp.task('css', function(){
-    return gulp.src(src.sass)
-        .pipe(sass(sassOptions).on('error', sass.logError))
-        .pipe(gulp.dest(dest.css))
-        .pipe(sourcemaps.init(mapsInitOptions))
-        .pipe(postcss([
-            autoprefixer(autoprefixerOptions),
-            cleancss(cleanCssOptions)
-        ]))
-        .pipe(rename(renameMinOptions))
-        .pipe(sourcemaps.write('.', mapsWriteOptions))
-        .pipe(gulp.dest(dest.css));
+	return gulp.src(src.sass)
+		.pipe(sass(sassOptions).on('error', sass.logError))
+		.pipe(gulp.dest(dest.css))
+		.pipe(sourcemaps.init(mapsInitOptions))
+		.pipe(postcss([
+			autoprefixer(autoprefixerOptions),
+			cleancss(cleanCssOptions)
+		]))
+		.pipe(rename(renameMinOptions))
+		.pipe(sourcemaps.write('.', mapsWriteOptions))
+		.pipe(gulp.dest(dest.css));
 });
 
 gulp.task('js', function(){
-    return gulp.src(src.js)
-        .pipe(sourcemaps.init(mapsInitOptions))
-        .pipe(uglify(uglifyOptions))
-        .pipe(rename(renameMinOptions))
-        .pipe(sourcemaps.write('.', mapsWriteOptions))
-        .pipe(gulp.dest(dest.js));
+	return gulp.src(src.js)
+		.pipe(sourcemaps.init(mapsInitOptions))
+		.pipe(uglify(uglifyOptions))
+		.pipe(rename(renameMinOptions))
+		.pipe(sourcemaps.write('.', mapsWriteOptions))
+		.pipe(gulp.dest(dest.js));
 });
 
 gulp.task('watch', function(){
-    gulp.watch(src.sass, ['css']).on('change', watcherOnChange);
-    gulp.watch(src.js, ['js']).on('change', watcherOnChange);
+	gulp.watch(src.sass, ['css']).on('change', watcherOnChange);
+	gulp.watch(src.js, ['js']).on('change', watcherOnChange);
 });
