@@ -185,29 +185,29 @@ else
 	header('X-UA-Compatible: IE=edge,chrome=1', TRUE);
 	header('Content-Type: text/html; charset=utf-8', TRUE);
 	
-	include_once '../dl-res/_header.inc.php';
-	include_once '../dl-res/_object.inc.php';
+	include '_header.inc.php';
+	include '_object.inc.php';
 
 	if (isset($_GET['cart']))
 	{
 		$cart->GetObjects();
 		$allFiles = $cart->GetAllFiles();
-		include_once '../dl-res/_cart.inc.php';
+		include '_cart.inc.php';
 	}
 	else if ($end->exists)
 	{
 		if ($end->isdir)
 		{
 			$end->GetChildren();
-			include_once '../dl-res/_dir.inc.php';
+			include '_dir.inc.php';
 		}
 		else if ($end->isfile)
 		{
-			include_once '../dl-res/_file.inc.php';
+			include '_file.inc.php';
 		}
 	}
 
-	include_once '../dl-res/_footer.inc.php';
+	include '_footer.inc.php';
 }
 
 ?>

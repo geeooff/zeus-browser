@@ -1,3 +1,16 @@
+@charset 'UTF-8';
+
+// Full Bootstrap w/ Flex
+@import '../../bower_components/bootstrap/scss/bootstrap-flex';
+
+// DataTables.net for Bootstrap
+@import '../../bower_components/datatables.net-bs/css/dataTables.bootstrap';
+
+// Font-Awesome
+$fa-font-path: '../fonts';
+@import '../../bower_components/font-awesome/scss/font-awesome';
+
+// My Styles
 body {
 	font-family: "Open Sans";
 }
