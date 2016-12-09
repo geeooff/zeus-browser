@@ -12,15 +12,17 @@
 						<pre class="modal-body-ajax-updated"></pre>
 					</div>
 					<div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
 					</div>
 				</div>
 			</div>
 		</div>-->
-		<script src="/dl-res/js/jquery-2.1.4.min.js"></script>
+		<script src="/dl-res/js/jquery.min.js"></script>
+		<script src="/dl-res/js/tether.min.js"></script>
 		<script src="/dl-res/js/bootstrap.min.js"></script>
-		<script src="/dl-res/js/datatables.min.js"></script>
-		<!--<script src="//www.gstatic.com/cv/js/sender/v1/cast_sender.js"></script>-->
-		<script src="/dl-res/js/main.js"></script>
+		<script src="/dl-res/js/jquery.dataTables.min.js"></script>
+		<!--<script src="/dl-res/js/dataTables.bootstrap.min.js"></script>-->
+		<script src="/dl-res/js/main.min.js"></script>
+		<!--<script src="https://www.gstatic.com/cv/js/sender/v1/cast_sender.js?loadCastFramework=1"></script>-->
 	</body>
 </html>

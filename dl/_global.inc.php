@@ -646,11 +646,11 @@ class FileSystemObjectCart
 						<div class="list-group-item', (!$object->exists ? ' list-group-item-danger' : ''), '">
 							<h4 class="list-group-item-heading clearfix">
 								<span class="pull-left">
-									<span class="glyphicon glyphicon-', $object->mediaicon ,'"></span>
+									<i class="fa fa-', $object->mediaicon ,'"></i>
 									&nbsp;<a href="', $object->uri, '" type="text/html" class="btn-link">', html_encode($object->name), '</a>
 								</span>
-								<a href="', $object->uri, '?removefromcart" type="application/json" class="btn btn-xs btn-danger removefromcart pull-right"><span class="glyphicon glyphicon-remove"></span></a>								
-								<span class="badge pull-right">', html_encode(format_filesize($totalSize)), '</span>
+								<a href="', $object->uri, '?removefromcart" type="application/json" class="btn btn-xs btn-danger removefromcart pull-right"><i class="fa fa-remove"></i></a>								
+								<span class="tag tag-pill pull-right">', html_encode(format_filesize($totalSize)), '</span>
 							</h4>';
 
 				if ($object->isdir)
@@ -698,7 +698,7 @@ class FileSystemObjectCart
 
 		echo '
 				<div class="btn-group pull-right" role="group">
-					<a href="?cart" type="text/html" class="btn btn-primary">Panier <span class="badge">', count($objects), '</span></a>
+					<a href="?cart" type="text/html" class="btn btn-secondary">Panier <span class="tag tag-default tag-pill">', count($objects), '</span></a>
 				</div>';
 	}
 }

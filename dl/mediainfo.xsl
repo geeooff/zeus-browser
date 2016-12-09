@@ -16,22 +16,20 @@
 	</xsl:template>
 
 	<xsl:template match="track">
-		<div class="panel panel-default mi-track">
-			<div class="panel-heading">
-				<xsl:choose>
-					<xsl:when test="@streamid">
-						<h3 class="panel-title"><xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="@streamid"/></h3>
-					</xsl:when>
-					<xsl:otherwise>
-						<h3 class="panel-title"><xsl:value-of select="@type"/></h3>
-					</xsl:otherwise>
-				</xsl:choose>
-			</div>
-			<div class="panel-body">
-				<dl class="dl-horizontal">
+		<div class="card mi-track">
+			<xsl:choose>
+				<xsl:when test="@streamid">
+					<h3 class="card-header"><xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="@streamid"/></h3>
+				</xsl:when>
+				<xsl:otherwise>
+					<h3 class="card-header"><xsl:value-of select="@type"/></h3>
+				</xsl:otherwise>
+			</xsl:choose>
+			<div class="card-block">
+				<dl class="row">
 					<xsl:for-each select="node()[not(self::text()[not(normalize-space())])]">
-						<dt><xsl:value-of select="name()"/></dt>
-						<dd><xsl:value-of select="."/></dd>
+						<dt class="col-sm-3"><xsl:value-of select="name()"/></dt>
+						<dd class="col-sm-9"><xsl:value-of select="."/></dd>
 					</xsl:for-each>
 				</dl>
 			</div>

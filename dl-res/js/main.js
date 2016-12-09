@@ -1,5 +1,5 @@
-$.fn.tooltip.Constructor.DEFAULTS.container = "body";
-$.fn.tooltip.Constructor.DEFAULTS.placement = "auto";
+//$.fn.tooltip.Constructor.DEFAULTS.container = "body";
+//$.fn.tooltip.Constructor.DEFAULTS.placement = "auto";
 
 $(document).ready(function(){
 
@@ -76,7 +76,7 @@ $(document).ready(function(){
 				if (data == 2) {
 					window.alert("Cet élement est déjà dans le panier.");
 				}
-				$(".glyphicon", $this).removeClass("glyphicon-shopping-cart").addClass("glyphicon-ok");
+				$("i.fa", $this).removeClass("fa-shopping-cart").addClass("fa-check");
 				refreshCartHtml();
 			},
 			"error": function(jqXHR, textStatus, errorThrown){
@@ -101,7 +101,7 @@ $(document).ready(function(){
 				if (data == -1) {
 					window.alert("Cet élement fait partie d'un dossier parent déjà ajouté au panier. Il ne peut être retiré individuellement.");
 				}
-				$(".glyphicon", $this).removeClass("glyphicon-shopping-cart").addClass("glyphicon-ok");
+				$("i.fa", $this).removeClass("fa-shopping-cart").addClass("fa-check");
 				refreshCartHtml();
 			},
 			"error": function(jqXHR, textStatus, errorThrown){

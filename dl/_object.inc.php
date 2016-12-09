@@ -13,21 +13,21 @@ $isInCart = $end->exists ? $cart->Contains($end) : FALSE;
 						foreach ($chain as $object)
 						{
 							if ($object == $end)
-								echo '<li class="active">', html_encode($object->name), '</li>', "\r\n"; 
+								echo '<li class="breadcrumb-item active">', html_encode($object->name), '</li>', "\r\n"; 
 							else if ($object->exists)
-								echo '<li><a href="', $object->uri, '" type="text/html">', html_encode($object->name), '</a></li>', "\r\n"; 
+								echo '<li class="breadcrumb-item"><a href="', $object->uri, '" type="text/html">', html_encode($object->name), '</a></li>', "\r\n"; 
 							else
-								echo '<li>', html_encode($object->name), '</li>', "\r\n"; 
+								echo '<li class="breadcrumb-item">', html_encode($object->name), '</li>', "\r\n"; 
 						}
 						echo '</ol>', "\r\n"; 
 					}
 
-					echo '<h2>', html_encode($end->name);
+					echo '<h1>', html_encode($end->name);
 					if (!$end->exists)
 					{
 						echo ' <small>n\'existe pas, bitch !</small>';
 					}
-					echo '</h2>', "\r\n"; 		
+					echo '</h1>', "\r\n"; 		
 				
 					if ($end->exists)
 					{
@@ -48,23 +48,23 @@ $isInCart = $end->exists ? $cart->Contains($end) : FALSE;
 						echo '</p>', "\r\n"; 
 					}
 				?>
-				<span class="btn-group">
-					<button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-						Debug <span class="caret"></span>
+				<div class="dropdown">
+					<button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown">
+						<i class="fa fa-bug"></i> Debug
 					</button>
-					<ul class="dropdown-menu" role="menu">
-						<li><a href="?phpinfo" type="text/html">phpinfo()</a></li>
-						<li><a href="?config" type="text/plain">config.ini</a></li>
-						<li><a href="?json" type="application/json">JSON</a></li>
-						<li><a href="?xml" type="application/xml">XML</a></li>
+					<div class="dropdown-menu">
+						<a class="dropdown-item" href="?phpinfo" type="text/html">phpinfo()</a>
+						<a class="dropdown-item" href="?config" type="text/plain">config.ini</a>
+						<a class="dropdown-item" href="?json" type="application/json">JSON</a>
+						<a class="dropdown-item" href="?xml" type="application/xml">XML</a>
 						<?php if ($end->exists && in_array($end->mediatype, ['video','music','image'])): ?>
-						<li><a href="?mediainfo" type="text/plain">Mediainfo (par défaut)</a></li>
-						<li><a href="?mediainfo&amp;format=text" type="text/plain">Mediainfo (Texte)</a></li>
-						<li><a href="?mediainfo&amp;format=xml" type="application/xml">Mediainfo (XML)</a></li>
-						<li><a href="?mediainfo&amp;format=html" type="text/html">Mediainfo (HTML)</a></li>
+						<a class="dropdown-item" href="?mediainfo" type="text/plain">Mediainfo (par défaut)</a>
+						<a class="dropdown-item" href="?mediainfo&amp;format=text" type="text/plain">Mediainfo (Texte)</a>
+						<a class="dropdown-item" href="?mediainfo&amp;format=xml" type="application/xml">Mediainfo (XML)</a>
+						<a class="dropdown-item" href="?mediainfo&amp;format=html" type="text/html">Mediainfo (HTML)</a>
 						<?php endif; ?>
-					</ul>
-				</span>
+					</div>
+				</div>
 			</div>
 		</div>
 		<div class="container">
@@ -76,7 +76,7 @@ $isInCart = $end->exists ? $cart->Contains($end) : FALSE;
 							if ($parent != null)
 							{
 								echo '<div class="btn-group pull-left" role="group">', "\r\n";
-								echo '<a href="', $parent->uri, '" type="text/html" class="btn btn-default"><span class="glyphicon glyphicon-menu-up"></span> <span class="hidden-xs">', html_encode($parent->name), '</span></a>', "\r\n";
+								echo '<a href="', $parent->uri, '" type="text/html" class="btn btn-secondary"><i class="fa fa-chevron-up"></i> <span class="hidden-xs-down">', html_encode($parent->name), '</span></a>', "\r\n";
 								echo '</div>', "\r\n";
 							}
 							if ($end->exists)
@@ -85,18 +85,18 @@ $isInCart = $end->exists ? $cart->Contains($end) : FALSE;
 
 								if ($end->isdir)
 								{
-									echo '<a href="?urls" type="text/plain" class="btn btn-primary" role="button"><span class="glyphicon glyphicon-list"></span> <span class="hidden-xs">URLs</span></a>', "\r\n";
+									echo '<a href="?urls" type="text/plain" class="btn btn-primary" role="button"><i class="fa fa-list"></i> <span class="hidden-xs-down">URLs</span></a>', "\r\n";
 								}
 								elseif ($end->isfile)
 								{
-									echo '<a href="', $end->path, '" download class="btn btn-primary" role="button"><span class="glyphicon glyphicon-save"></span> <span class="hidden-xs">Télécharger</span></a>', "\r\n";
-									echo '<a href="?url" type="text/plain" class="btn btn-primary" role="button"><span class="glyphicon glyphicon-list"></span> <span class="hidden-xs">URL</span></a>', "\r\n";
+									echo '<a href="', $end->path, '" download class="btn btn-primary" role="button"><i class="fa fa-save"></i> <span class="hidden-xs-down">Télécharger</span></a>', "\r\n";
+									echo '<a href="?url" type="text/plain" class="btn btn-primary" role="button"><i class="fa fa-list"></i> <span class="hidden-xs-down">URL</span></a>', "\r\n";
 								}
 
 								if ($isInCart)
-									echo '<a href="?removefromcart" type="application/json" class="btn btn-danger removefromcart" role="button"><span class="glyphicon glyphicon-shopping-cart"></span> <span class="hidden-xs">Retirer</span></a>', "\r\n";
+									echo '<a href="?removefromcart" type="application/json" class="btn btn-danger removefromcart" role="button"><i class="fa fa-shopping-cart"></i> <span class="hidden-xs-down">Retirer</span></a>', "\r\n";
 								else
-									echo '<a href="?addtocart" type="application/json" class="btn btn-primary addtocart" role="button"><span class="glyphicon glyphicon-shopping-cart"></span> <span class="hidden-xs">Ajouter</span></a>', "\r\n";
+									echo '<a href="?addtocart" type="application/json" class="btn btn-primary addtocart" role="button"><i class="fa fa-shopping-cart"></i> <span class="hidden-xs-down">Ajouter</span></a>', "\r\n";
 
 								echo '</div>', "\r\n";
 							}
@@ -107,9 +107,9 @@ $isInCart = $end->exists ? $cart->Contains($end) : FALSE;
 					<div id="header-toolbar-hidden">
 						<?php
 							if (!$isInCart)
-								echo '<a href="?removefromcart" type="application/json" class="btn btn-danger removefromcart" role="button"><span class="glyphicon glyphicon-shopping-cart"></span> <span class="hidden-xs">Retirer</span></a>', "\r\n";
+								echo '<a href="?removefromcart" type="application/json" class="btn btn-danger removefromcart" role="button"><i class="fa fa-shopping-cart"></i> <span class="hidden-xs-down">Retirer</span></a>', "\r\n";
 							else
-								echo '<a href="?addtocart" type="application/json" class="btn btn-primary addtocart" role="button"><span class="glyphicon glyphicon-shopping-cart"></span> <span class="hidden-xs">Ajouter</span></a>', "\r\n";
+								echo '<a href="?addtocart" type="application/json" class="btn btn-primary addtocart" role="button"><i class="fa fa-shopping-cart"></i> <span class="hidden-xs-down">Ajouter</span></a>', "\r\n";
 						?>
 					</div>
 				</div>

@@ -21,58 +21,56 @@ isset($builder) && isset($cart) or die(':P');
 				<div class="col-xs-12">
 					<div id="header-toolbar" class="btn-toolbar clearfix" role="toolbar">
 						<div class="btn-group pull-left" role="group">
-							<a href="javascript:window.history.back()" class="btn btn-default"><span class="glyphicon glyphicon-menu-left"></span> <span class="hidden-xs">Retour</span></a>
+							<a href="javascript:window.history.back()" class="btn btn-secondary"><i class="fa fa-chevron-left"></i> <span class="hidden-xs-down">Retour</span></a>
 						</div>
 						<?php if (count($cart->objects) > 0): ?>
 						<div class="btn-group pull-right" role="group">
-							<a href="?carturls" type="text/plain" class="btn btn-primary"><span class="glyphicon glyphicon-list"></span> URLs</a>
+							<a href="?carturls" type="text/plain" class="btn btn-primary"><i class="fa fa-list"></i> URLs</a>
 							<a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-								<span class="caret"></span>
 								<span class="sr-only">Types de fichiers</span>
 							</a>
-							<ul class="dropdown-menu" role="menu">
-								<li><a href="?carturls" type="text/plain">Tout fichier</a></li>
-								<li class="divider"></li><?php
+							<div class="dropdown-menu">
+								<a class="dropdown-item" href="?carturls" type="text/plain">Tout fichier</a>
+								<div class="dropdown-divider"></div><?php
 							foreach($builder->mediatypelabels as $mediatype => $mediatypelabel)
 							{
 								echo '
-								<li><a href="?carturls&mediatype=', urlencode($mediatype), '" type="text/plain"><span class="glyphicon glyphicon-', $builder->mediaicons[$mediatype], '"></span> ', html_encode($mediatypelabel), '</a></li>';
+								<a class="dropdown-item" href="?carturls&mediatype=', urlencode($mediatype), '" type="text/plain"><i class="fa fa-fw fa-', $builder->mediaicons[$mediatype], '"></i> ', html_encode($mediatypelabel), '</a>';
 							}
 							?>
-							</ul>
+							</div>
 						</div>
 						<div class="btn-group pull-right" role="group">
-							<a href="?cartm3u" type="application/x-mpegurl" class="btn btn-primary"><span class="glyphicon glyphicon-play"></span> Playlist</a>
+							<a href="?cartm3u" type="application/x-mpegurl" class="btn btn-primary"><i class="fa fa-play"></i> Playlist</a>
 							<a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-								<span class="caret"></span>
 								<span class="sr-only">Types de fichiers</span>
 							</a>
-							<ul class="dropdown-menu" role="menu">
-								<li class="dropdown-header">Format M3U</li>
-								<li><a href="?cartm3u" type="application/x-mpegurl">Tout fichier</a></li>
-								<li class="divider"></li>
+							<div class="dropdown-menu">
+								<div class="dropdown-header">Format M3U</div>
+								<a class="dropdown-item" href="?cartm3u" type="application/x-mpegurl">Tout fichier</a>
+								<div class="dropdown-divider"></div>
 								<?php
 							foreach($builder->mediatypelabels as $mediatype => $mediatypelabel)
 							{
 								echo '
-								<li><a href="?cartm3u&mediatype=', urlencode($mediatype), '" type="application/x-mpegurl"><span class="glyphicon glyphicon-', $builder->mediaicons[$mediatype], '"></span> ', html_encode($mediatypelabel), '</a></li>';
+								<a class="dropdown-item" href="?cartm3u&mediatype=', urlencode($mediatype), '" type="application/x-mpegurl"><i class="fa fa-fw fa-', $builder->mediaicons[$mediatype], '"></i> ', html_encode($mediatypelabel), '</a>';
 							}
 							?>
-								<li class="divider"></li>
-								<li class="dropdown-header">Format ASX</li>
-								<li><a href="?cartasx" type="application/asx">Tout fichier</a></li>
-								<li class="divider"></li>
+								<div class="dropdown-divider"></div>
+								<div class="dropdown-header">Format ASX</div>
+								<a class="dropdown-item" href="?cartasx" type="application/asx">Tout fichier</a>
+								<div class="dropdown-divider"></div>
 								<?php
 							foreach($builder->mediatypelabels as $mediatype => $mediatypelabel)
 							{
 								echo '
-								<li><a href="?cartasx&mediatype=', urlencode($mediatype), '" type="application/asx"><span class="glyphicon glyphicon-', $builder->mediaicons[$mediatype], '"></span> ', html_encode($mediatypelabel), '</a></li>';
+								<a class="dropdown-item" href="?cartasx&mediatype=', urlencode($mediatype), '" type="application/asx"><i class="fa fa-fw fa-', $builder->mediaicons[$mediatype], '"></i> ', html_encode($mediatypelabel), '</a>';
 							}
 							?>
-							</ul>
+							</div>
 						</div>
 						<div class="btn-group pull-right" role="group">
-							<a href="?emptycart" type="application/json" class="btn btn-danger emptycart"><span class="glyphicon glyphicon-remove"></span> <span class="hidden-xs">Vider</span></a>
+							<a href="?emptycart" type="application/json" class="btn btn-danger emptycart"><i class="fa fa-remove"></i> <span class="hidden-xs-down">Vider</span></a>
 						</div>
 						<?php endif; ?>
 					</div>
