@@ -1,8 +1,33 @@
 @charset 'UTF-8';
 
+// Bootstrap settings
+//$font-size-root:			16px;
+$headings-font-weight:   	300;
+
+$gray-dark:                 #373a3c;
+$gray:                      #55595c;
+$gray-light:                #818a91;
+$gray-lighter:              #eceeef;
+$gray-lightest:             #f7f7f9;
+
+$brand-primary:             #0275d8;
+$brand-success:             #5cb85c;
+$brand-info:                #5bc0de;
+$brand-warning:             #f0ad4e;
+$brand-danger:              #d9534f;
+$brand-inverse:             $gray-dark;
+
+$font-family-sans-serif: 	"Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !default;
+$enable-flex: 				true;
+$enable-shadows:            true;
+$enable-gradients:          true;
+$enable-transitions:        true;
+$enable-hover-media-query:  true;
+$enable-print-styles: 		false;
+$breadcrumb-bg:				$gray-lightest;
+$dt-font-weight:			300;
+
 // Bootstrap
-//@import '../../bower_components/bootstrap/scss/bootstrap-flex';
-$enable-flex: true;
 @import '../../bower_components/bootstrap/scss/custom';
 @import '../../bower_components/bootstrap/scss/variables';
 @import '../../bower_components/bootstrap/scss/mixins';
@@ -58,15 +83,11 @@ $fa-font-path: '../fonts';
 @import '../../bower_components/font-awesome/scss/font-awesome';
 
 // My Styles
-body {
-	font-family: 'Open Sans';
-}
-
 #header-toolbar { margin-bottom: 20px; }
 #header-toolbar-hidden { display: none; }
 
 .jumbotron {
-	.value { font-weight: bold; }
+	.value { font-weight: 600; }
 }
 
 #dir {
@@ -98,16 +119,61 @@ div.mediainfo dd { overflow: hidden; }
 	}
 }
 
-.embed-responsive,
-#player { margin-top: 10px; margin-bottom: 20px; }
-	.embed-responsive #player { margin: 0; }
-
-.embed-responsive.embed-responsive-auto { 
-	position: inherit; 
-	height: inherit; 
-	overflow: inherit;
-	.embed-responsive-item { 
+.embed-responsive {
+	&.embed-responsive-auto { 
 		position: inherit; 
-		width: 100%; 
-		height: auto; }
+		height: inherit; 
+		overflow: inherit;
+		
+		.embed-responsive-item { 
+			position: inherit; 
+			width: 100%; 
+			height: auto;
+		}
+	}
+}
+
+// MadiaInfo tracks
+.mi-track {
+	dl {
+		@include make-row();
+		margin-bottom: 0;
+
+		dt {
+			@include make-col-ready();
+		}
+		dd {
+			@include make-col-ready();
+			margin-bottom: 0.125rem;
+		}
+
+		@include media-breakpoint-up('md') {
+			dt {
+				@include make-col(5);
+				@include text-truncate();
+				text-align: right;
+			}
+			dd {
+				@include make-col(7);
+			}
+		}
+
+		@include media-breakpoint-up('lg') {
+			dt {
+				@include make-col(4);
+			}
+			dd {
+				@include make-col(8);
+			}
+		}
+
+		@include media-breakpoint-up('xl') {
+			dt {
+				@include make-col(3);
+			}
+			dd {
+				@include make-col(9);
+			}
+		}
+	}
 }

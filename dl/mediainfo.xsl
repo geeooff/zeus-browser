@@ -26,10 +26,10 @@
 				</xsl:otherwise>
 			</xsl:choose>
 			<div class="card-block">
-				<dl class="row">
+				<dl>
 					<xsl:for-each select="node()[not(self::text()[not(normalize-space())])]">
-						<dt class="col-sm-3"><xsl:value-of select="name()"/></dt>
-						<dd class="col-sm-9"><xsl:value-of select="."/></dd>
+						<dt><xsl:value-of select="name()"/></dt>
+						<dd><xsl:value-of select="."/></dd>
 					</xsl:for-each>
 				</dl>
 			</div>

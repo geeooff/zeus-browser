@@ -174,35 +174,42 @@ class FileSystemObject
 		switch ($format)
 		{
 			case MediaInfoFormat::Text:
-				exec('/usr/bin/mediainfo ' . escapeshellarg($this->realpath), $output, $exitcode);
+				exec($this->builder->mediainfo . ' ' . escapeshellarg($this->realpath), $output, $exitcode);
 				break;
 
 			case MediaInfoFormat::Xml:
 			case MediaInfoFormat::Html:
-				exec('/usr/bin/mediainfo --Output=XML ' . escapeshellarg($this->realpath), $output, $exitcode);
+				exec($this->builder->mediainfo . ' --Output=XML ' . escapeshellarg($this->realpath), $output, $exitcode);
 				break;
 
 			//case MediaInfoFormat::Html:
-			//	exec('/usr/bin/mediainfo --Output=XML ' . escapeshellarg($this->realpath) . ' | /usr/bin/xsltproc --nonet --nowrite --nomkdir mediainfo.xsl -', $output, $exitcode);
+			//	exec($this->builder->mediainfo . ' --Output=XML ' . escapeshellarg($this->realpath) . ' | /usr/bin/xsltproc --nonet --nowrite --nomkdir mediainfo.xsl -', $output, $exitcode);
 			//	break;
 		}
 
 		if ($exitcode === 0)
+		{
+			$output = implode(PHP_EOL, $output);
+
 			if ($format == MediaInfoFormat::Html)
 			{
-				$output = implode(PHP_EOL, $output);
-				$xml = new DOMDocument();
-				$xml.load($output);
+				$xml = new DOMDocument();				
+				$xml->loadXML($output, LIBXML_NONET);
+
 				$xsl = new DOMDocument();
-				$xsl.load('mediainfo.xsl');
-				$proc = new XSLTProcessor;
+				$xsl->load('mediainfo.xsl', LIBXML_NONET);
+
+				$proc = new XSLTProcessor();
+				$proc->setSecurityPrefs(XSL_SECPREF_DEFAULT);
 				$proc->importStyleSheet($xsl);
+
 				$output = $proc->transformToXML($xml);
 			}
-			else
-				return implode(PHP_EOL, $output);
-		else
-			return FALSE;
+
+			return $output;
+		}
+
+		return FALSE;
 	}
 
 	public function GetAllText(&$encoding = NULL)
@@ -226,11 +233,20 @@ class FileSystemObject
 	{
 		if ($this->securelink_md5 === NULL || $this->securelink_expires === NULL)
 		{
-			$decoded_secure_path = rawurldecode($this->securepath);
-			$expires = strtotime('now +2 days');
-			//$value = $decoded_secure_path . $_SERVER['REMOTE_ADDR'] . $expires . ' bc81ed5fa27a92b0e84ab23723d4145e';
-			$value = $decoded_secure_path . $expires . ' bc81ed5fa27a92b0e84ab23723d4145e';
-			$md5 = str_replace(['+', '/', '='], ['-', '_', NULL], base64_encode(md5($value, TRUE)));
+			$format = $this->builder->config['SECURELINK_MD5'];
+			$uri = rawurldecode($this->securepath);
+			$expires = strtotime($this->builder->config['SECURELINK_EXPIRES']);
+			$remote_addr = $_SERVER['REMOTE_ADDR'];
+			$value = str_replace(
+				[ '$uri', '$secure_link_expires', '$remote_addr' ],
+				[ $uri, $expires, $remote_addr ],
+				$format
+			);
+			$md5 = str_replace(
+				['+', '/', '='],
+				['-', '_', NULL],
+				base64_encode(md5($value, TRUE))
+			);
 			$this->securelink_md5 = $md5;
 			$this->securelink_expires = $expires;
 		}		
@@ -281,12 +297,15 @@ class FileSystemObject
 class FileSystemObjectBuilder
 {
 	public $config;
+	public $user;
+	public $userisadmin;
 	public $mediatypes;
 	public $mediaicons;
 	public $mediatypelabels;
 	public $mimetypes;
 	public $playermimetypes;
 	public $skip;
+	public $mediainfo;
 
 	private $baseurl;
 	private $root;
@@ -297,21 +316,12 @@ class FileSystemObjectBuilder
 
 	public function __construct($config)
 	{
-		$this->config = $config;
-		$this->mediatypes = $config['mediatypes'];
-		$this->mediaicons = $config['mediaicons'];
-		$this->mediatypelabels = $config['mediatypelabels'];
-		$this->mimetypes = $config['mimetypes'];
-		$this->playermimetypes = $config['playermimetypes'];
-		$this->skip = $config['SKIP'];
-
 		$user = isset($_SERVER['PHP_AUTH_USER']) ? $_SERVER['PHP_AUTH_USER'] : NULL;
-		$userIsAdmin = ($user === NULL || in_array($user, $config['ADMINS']));
-		$root = $userIsAdmin ? $config['ROOT_ADMIN'] : $config['ROOT_GUEST'];
-		$path = $userIsAdmin ? $config['PATH_ADMIN'] : $config['PATH_GUEST'];
-		$securepath = $userIsAdmin ? $config['SECURE_PATH_ADMIN'] : $config['SECURE_PATH_GUEST'];
-		$cartSessionName = $userIsAdmin ? $config['session']['name-admin'] : $config['session']['name-guest'];
-
+		$userisadmin = ($user === NULL || in_array($user, $config['ADMINS']));
+		$root = $userisadmin ? (isset($config['ROOT_ADMIN']) ? $config['ROOT_ADMIN'] : NULL) : (isset($config['ROOT_GUEST']) ? $config['ROOT_GUEST'] : NULL);
+		$path = $userisadmin ? $config['PATH_ADMIN'] : $config['PATH_GUEST'];
+		$securepath = $userisadmin ? $config['SECURE_PATH_ADMIN'] : $config['SECURE_PATH_GUEST'];
+		
 		// resolves root path, if not specified in config file
 		if ($root == NULL || trim($root) == '')
 		{
@@ -326,9 +336,22 @@ class FileSystemObjectBuilder
 			'path' => $path
 		];
 
-		$cartObject = new FileSystemObjectCart($this, $cartSessionName);
+		$this->config = $config;
+		$this->user = $user;
+		$this->userisadmin = $userisadmin;
+		$this->mediatypes = $config['mediatypes'];
+		$this->mediaicons = $config['mediaicons'];
+		$this->mediatypelabels = $config['mediatypelabels'];
+		$this->mimetypes = $config['mimetypes'];
+		$this->playermimetypes = $config['playermimetypes'];
+		$this->skip = $config['SKIP'];
+		$this->mediainfo = isset($config['MEDIAINFO_BIN']) ? $config['MEDIAINFO_BIN'] : '/usr/bin/mediainfo';
+		
+		$this->baseurl = $baseurl;
+		$this->root = $root;
+		$this->path = $path;
 
-		$rootObject = new FileSystemObject(
+		$this->rootObject = new FileSystemObject(
 			$this,
 			$config['ROOT_NAME'],
 			NULL,
@@ -338,11 +361,12 @@ class FileSystemObjectBuilder
 			$securepath
 		);
 
-		$this->baseurl = $baseurl;
-		$this->root = $root;
-		$this->path = $path;
-		$this->cartObject = $cartObject;
-		$this->rootObject = $rootObject;
+		$cartSessionName = $userisadmin ? $config['session']['name-admin'] : $config['session']['name-guest'];
+
+		$this->cartObject = new FileSystemObjectCart(
+			$this,
+			$cartSessionName
+		);
 	}
 
 	public function GetCart()
@@ -621,10 +645,6 @@ class FileSystemObjectCart
 
 	public function GetFullHtml()
 	{
-		echo '
-			<div class="row">
-				<div class="col-xs-12">';
-
 		$objects = $this->GetObjects();
 
 		if (count($objects) > 0)
@@ -645,12 +665,12 @@ class FileSystemObjectCart
 				echo '
 						<div class="list-group-item', (!$object->exists ? ' list-group-item-danger' : ''), '">
 							<h4 class="list-group-item-heading clearfix">
-								<span class="pull-left">
+								<span class="pull-xs-left">
 									<i class="fa fa-', $object->mediaicon ,'"></i>
 									&nbsp;<a href="', $object->uri, '" type="text/html" class="btn-link">', html_encode($object->name), '</a>
 								</span>
-								<a href="', $object->uri, '?removefromcart" type="application/json" class="btn btn-xs btn-danger removefromcart pull-right"><i class="fa fa-remove"></i></a>								
-								<span class="tag tag-pill pull-right">', html_encode(format_filesize($totalSize)), '</span>
+								<a href="', $object->uri, '?removefromcart" type="application/json" class="btn btn-sm btn-danger removefromcart pull-xs-right"><i class="fa fa-remove"></i></a>								
+								<span class="tag tag-pill pull-xs-right">', html_encode(format_filesize($totalSize)), '</span>
 							</h4>';
 
 				if ($object->isdir)
@@ -686,20 +706,13 @@ class FileSystemObjectCart
 						Le panier est vide.
 					</div>';
 		}
-
-		echo '
-				</div>
-			</div>';
 	}
 
 	public function GetLightHtml()
 	{
 		$objects = $this->GetObjects();
 
-		echo '
-				<div class="btn-group pull-right" role="group">
-					<a href="?cart" type="text/html" class="btn btn-secondary">Panier <span class="tag tag-default tag-pill">', count($objects), '</span></a>
-				</div>';
+		echo '<a href="?cart" type="text/html" class="btn btn-secondary">Panier <span class="tag tag-default tag-pill">', count($objects), '</span></a>';
 	}
 }
 
@@ -869,10 +882,10 @@ function total_size($files)
 	return $size;
 }
 
-function http_die(string $message, int $http_reponse_code = 500)
+function http_exit(string $message, int $http_reponse_code = 500)
 {
 	header('Content-Type: text/plain', TRUE, $http_reponse_code);
-	return die($message);
+	exit($message);
 }
 
 // Source: http://stackoverflow.com/questions/2637945/getting-relative-path-from-absolute-path-in-php

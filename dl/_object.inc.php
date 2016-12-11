@@ -22,7 +22,7 @@ $isInCart = $end->exists ? $cart->Contains($end) : FALSE;
 						echo '</ol>', "\r\n"; 
 					}
 
-					echo '<h1>', html_encode($end->name);
+					echo '<h1 class="display-4">', html_encode($end->name);
 					if (!$end->exists)
 					{
 						echo ' <small>n\'existe pas, bitch !</small>';
@@ -38,7 +38,7 @@ $isInCart = $end->exists ? $cart->Contains($end) : FALSE;
 							echo '</div>', "\r\n"; 
 						}
 						
-						echo '<p>Date&nbsp;: <span class="value date" data-toggle="tooltip" data-placement="right" title="', html_encode(format_datetime_full($end->mtime)), '">', html_encode(format_datetime_simple($end->mtime)),'</span>', "\r\n"; 
+						echo '<p class="lead">Date&nbsp;: <span class="value date" data-toggle="tooltip" data-placement="right" title="', html_encode(format_datetime_full($end->mtime)), '">', html_encode(format_datetime_simple($end->mtime)),'</span>', "\r\n"; 
 
 						if ($end->isfile)
 						{
@@ -68,49 +68,45 @@ $isInCart = $end->exists ? $cart->Contains($end) : FALSE;
 			</div>
 		</div>
 		<div class="container">
-			<div class="row">
-				<div class="col-xs-12">
-					<div id="header-toolbar" class="btn-toolbar clearfix" role="toolbar">
-						<?php
-							$parent = $end->exists ? $end->parent : $end->GetFirstExistantAncestor();
-							if ($parent != null)
-							{
-								echo '<div class="btn-group pull-left" role="group">', "\r\n";
-								echo '<a href="', $parent->uri, '" type="text/html" class="btn btn-secondary"><i class="fa fa-chevron-up"></i> <span class="hidden-xs-down">', html_encode($parent->name), '</span></a>', "\r\n";
-								echo '</div>', "\r\n";
-							}
-							if ($end->exists)
-							{
-								echo '<div class="btn-group pull-right" role="group">', "\r\n";
+			<div id="header-toolbar" class="btn-toolbar clearfix" role="toolbar">
+				<?php
+					$parent = $end->exists ? $end->parent : $end->GetFirstExistantAncestor();
+					if ($parent != null)
+					{
+						echo '<div class="btn-group pull-xs-left" role="group">', "\r\n";
+						echo '<a href="', $parent->uri, '" type="text/html" class="btn btn-secondary"><i class="fa fa-chevron-up"></i> <span class="hidden-xs-down">', html_encode($parent->name), '</span></a>', "\r\n";
+						echo '</div>', "\r\n";
+					}
+					if ($end->exists)
+					{
+						echo '<div class="btn-group pull-xs-right" role="group">', "\r\n";
 
-								if ($end->isdir)
-								{
-									echo '<a href="?urls" type="text/plain" class="btn btn-primary" role="button"><i class="fa fa-list"></i> <span class="hidden-xs-down">URLs</span></a>', "\r\n";
-								}
-								elseif ($end->isfile)
-								{
-									echo '<a href="', $end->path, '" download class="btn btn-primary" role="button"><i class="fa fa-save"></i> <span class="hidden-xs-down">Télécharger</span></a>', "\r\n";
-									echo '<a href="?url" type="text/plain" class="btn btn-primary" role="button"><i class="fa fa-list"></i> <span class="hidden-xs-down">URL</span></a>', "\r\n";
-								}
+						if ($end->isdir)
+						{
+							echo '<a href="?urls" type="text/plain" class="btn btn-secondary" role="button"><i class="fa fa-list"></i> <span class="hidden-xs-down">URLs</span></a>', "\r\n";
+						}
+						elseif ($end->isfile)
+						{
+							echo '<a href="', $end->path, '" download class="btn btn-secondary" role="button"><i class="fa fa-save"></i> <span class="hidden-xs-down">Télécharger</span></a>', "\r\n";
+							echo '<a href="?url" type="text/plain" class="btn btn-secondary" role="button"><i class="fa fa-list"></i> <span class="hidden-xs-down">URL</span></a>', "\r\n";
+						}
 
-								if ($isInCart)
-									echo '<a href="?removefromcart" type="application/json" class="btn btn-danger removefromcart" role="button"><i class="fa fa-shopping-cart"></i> <span class="hidden-xs-down">Retirer</span></a>', "\r\n";
-								else
-									echo '<a href="?addtocart" type="application/json" class="btn btn-primary addtocart" role="button"><i class="fa fa-shopping-cart"></i> <span class="hidden-xs-down">Ajouter</span></a>', "\r\n";
+						if ($isInCart)
+							echo '<a href="?removefromcart" type="application/json" class="btn btn-danger removefromcart" role="button"><i class="fa fa-shopping-cart"></i> <span class="hidden-xs-down">Retirer</span></a>', "\r\n";
+						else
+							echo '<a href="?addtocart" type="application/json" class="btn btn-secondary addtocart" role="button"><i class="fa fa-shopping-cart"></i> <span class="hidden-xs-down">Ajouter</span></a>', "\r\n";
 
-								echo '</div>', "\r\n";
-							}
+						echo '</div>', "\r\n";
+					}
 
-							echo '<div class="cart cart-light">', $cart->GetLightHtml(), '</div>';
-						?>
-					</div>
-					<div id="header-toolbar-hidden">
-						<?php
-							if (!$isInCart)
-								echo '<a href="?removefromcart" type="application/json" class="btn btn-danger removefromcart" role="button"><i class="fa fa-shopping-cart"></i> <span class="hidden-xs-down">Retirer</span></a>', "\r\n";
-							else
-								echo '<a href="?addtocart" type="application/json" class="btn btn-primary addtocart" role="button"><i class="fa fa-shopping-cart"></i> <span class="hidden-xs-down">Ajouter</span></a>', "\r\n";
-						?>
-					</div>
-				</div>
+					echo '<div class="cart cart-light btn-group pull-xs-right" role="group">', $cart->GetLightHtml(), '</div>', "\r\n";
+				?>
+			</div>
+			<div id="header-toolbar-hidden">
+				<?php
+					if (!$isInCart)
+						echo '<a href="?removefromcart" type="application/json" class="btn btn-danger removefromcart" role="button"><i class="fa fa-shopping-cart"></i> <span class="hidden-xs-down">Retirer</span></a>', "\r\n";
+					else
+						echo '<a href="?addtocart" type="application/json" class="btn btn-secondary addtocart" role="button"><i class="fa fa-shopping-cart"></i> <span class="hidden-xs-down">Ajouter</span></a>', "\r\n";
+				?>
 			</div>

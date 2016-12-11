@@ -14,44 +14,64 @@ $config = parse_ini_file('config.ini', $process_sections = TRUE, $scanner_mode =
 
 require_once '_global.inc.php';
 
-extension_loaded('intl') or http_die('intl extension must be installed');
+extension_loaded('intl') or http_exit('intl extension must be installed');
 
 $builder = new FileSystemObjectBuilder($config);
 $cart = $builder->GetCart();
 $chain = $builder->GetChain();
-$end = array_pop($chain); // end($chain);
+$end = array_pop($chain);
 
 if (isset($_GET['config']))
 {
-	//header('Content-Type: application/json; charset=utf-8', TRUE);
-	//echo json_encode($config, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
-	header('Content-Type: text/plain; charset=utf-8', TRUE);
-	echo print_r($config);
+	if ($builder->userisadmin)
+	{
+		//header('Content-Type: application/json; charset=utf-8', TRUE);
+		//echo json_encode($config, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+		header('Content-Type: text/plain; charset=utf-8', TRUE);
+		echo print_r($config);
+	}
+	else
+		http_response_code(403);
 }
 else if (isset($_GET['json']))
 {
-	header('Content-Type: application/json; charset=utf-8', TRUE);
-	echo json_encode($end, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+	if ($builder->userisadmin)
+	{
+		header('Content-Type: application/json; charset=utf-8', TRUE);
+		echo json_encode($end, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+	}
+	else
+		http_response_code(403);
 }
 else if (isset($_GET['xml']))
 {
-	error_reporting(E_ALL ^ E_STRICT ^ E_DEPRECATED);
-	header('Content-Type: application/xml; charset=utf-8', TRUE);
-	require_once 'XML/Serializer.php';
-	$serializer = new XML_Serializer([
-		'indent'          => "\t",
-		'linebreak'       => "\r\n",
-		'typeHints'       => FALSE,
-		'addDecl'         => TRUE,
-		'encoding'        => 'UTF-8'
-	]);
-	$serializer->serialize($end) or die("XML Serialization failed");
-	echo $serializer->getSerializedData();
+	if ($builder->userisadmin)
+	{
+		error_reporting(E_ALL ^ E_STRICT ^ E_DEPRECATED);
+		header('Content-Type: application/xml; charset=utf-8', TRUE);
+		require_once 'XML/Serializer.php';
+		$serializer = new XML_Serializer([
+			'indent'          => "\t",
+			'linebreak'       => "\r\n",
+			'typeHints'       => FALSE,
+			'addDecl'         => TRUE,
+			'encoding'        => 'UTF-8'
+		]);
+		$serializer->serialize($end) or die("XML Serialization failed");
+		echo $serializer->getSerializedData();
+	}
+	else
+		http_response_code(403);
 }
 else if (isset($_GET['phpinfo']))
 {
-	header('Content-Type: text/html; charset=utf-8', TRUE);
-	phpinfo();
+	if ($builder->userisadmin)
+	{
+		header('Content-Type: text/html; charset=utf-8', TRUE);
+		phpinfo();
+	}
+	else
+		http_response_code(403);
 }
 else if (isset($_GET['mediainfo']))
 {
@@ -63,27 +83,32 @@ else if (isset($_GET['mediainfo']))
 		{
 			case 'text':
 				header('Content-Type: text/plain; charset=utf-8', TRUE);
-				echo $end->GetMediaInfo(MediaInfoFormat::Text) or http_die("MediaInfo failure");
+				$output = $end->GetMediaInfo(MediaInfoFormat::Text);
 				break;
 
 			case 'xml':
 				header('Content-Type: application/xml; charset=utf-8', TRUE);
-				echo $end->GetMediaInfo(MediaInfoFormat::Xml) or http_die("MediaInfo failure");
+				$output = $end->GetMediaInfo(MediaInfoFormat::Xml);
 				break;
 
 			case 'html':
 				header('Content-Type: text/html; charset=utf-8', TRUE);
-				echo $end->GetMediaInfo(MediaInfoFormat::Html) or http_die("MediaInfo failure");
+				$output = $end->GetMediaInfo(MediaInfoFormat::Html);
 				break;
 
 			default:
-				http_response_code(404);
+				http_exit('MediaInfo: output format "' . $format . '" is not implemented');
 				break;
 		}
+
+		if ($output !== FALSE)
+			echo $output;
+		else
+			http_exit('MediaInfo: unknown error');
 	}
 	else
 	{
-		http_response_code(404);
+		http_exit('MediaInfo: file mediatype "' . $end->mediatype . '" is not implemented');
 	}
 }
 else if (isset($_GET['url']))

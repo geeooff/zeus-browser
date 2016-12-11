@@ -4,8 +4,8 @@ isset($end) or die(':P');
 
 $https = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on');
 $securelink = $end->GetSecureLink();
-$httpSecureLink = $end->GetSecureLink($scheme = 'http'); //$https ? substr_replace($securelink, 'http', 0, 5) : $securelink;
-$httpsSecureLink = $end->GetSecureLink($scheme = 'https'); //$https ? $securelink : substr_replace($securelink, 'https', 0, 4);
+$httpSecureLink = $https ? $end->GetSecureLink($scheme = 'http') : $securelink;
+$httpsSecureLink = $https ? $securelink : $end->GetSecureLink($scheme = 'https');
 
 ?>
 			<?php if (in_array($end->mediatype, ['video','music','image'])): ?>
@@ -34,8 +34,10 @@ $httpsSecureLink = $end->GetSecureLink($scheme = 'https'); //$https ? $securelin
 						Aperçu vidéo
 						<select class="ratio">
 							<option value="auto" selected>auto</option>
+							<option value="21by9">21:9</option>
 							<option value="16by9">16:9</option>
 							<option value="4by3">4:3</option>
+							<option value="1by1">1:1</option>
 						</select>
 						<select class="ssl">
 							<option value="<?=$httpsSecureLink?>"<?=($https ? ' selected' : '')?>>https</option>
