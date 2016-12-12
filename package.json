@@ -17,7 +17,7 @@
   "devDependencies": {
     "autoprefixer": "^6.5.3",
     "del": "^2.2.2",
-    "eslint": "^3.11.1",
+    "eslint": "^3.12.1",
     "gulp": "^3.9.1",
     "gulp-concat": "^2.6.1",
     "gulp-postcss": "^6.2.0",

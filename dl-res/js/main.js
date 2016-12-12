@@ -15,17 +15,17 @@
 		var $carts = $(".cart");
 		var $fullCarts = $carts.filter(".cart-full");
 		var $lightCarts = $carts.filter(".cart-light");
-		
+
 		function refreshCartHtml() {
 			if ($fullCarts.length > 0)
 			{
 				$.ajax({
-					"dataType": "html",
-					"url": "?fullcarthtml",
-					"success": function(data, textStatus, jqXHR){
+					dataType: "html",
+					url: "?fullcarthtml",
+					success: function(data, textStatus, jqXHR){
 						$fullCarts.html(data);
 					},
-					"error": function(jqXHR, textStatus, errorThrown){
+					error: function(jqXHR, textStatus, errorThrown){
 						console.error("".concat("Impossible de récupérer le fragment HTML complet du panier (", textStatus, ", ", errorThrown, ")"));
 					}
 				});
@@ -33,12 +33,12 @@
 			if ($lightCarts.length > 0)
 			{
 				$.ajax({
-					"dataType": "html",
-					"url": "?lightcarthtml",
-					"success": function(data, textStatus, jqXHR){
+					dataType: "html",
+					url: "?lightcarthtml",
+					success: function(data, textStatus, jqXHR){
 						$lightCarts.html(data);
 					},
-					"error": function(jqXHR, textStatus, errorThrown){
+					error: function(jqXHR, textStatus, errorThrown){
 						console.error("".concat("Impossible de récupérer le fragment HTML léger du panier (", textStatus, ", ", errorThrown, ")"));
 					}
 				});
@@ -47,7 +47,7 @@
 
 		$("[data-toggle='tooltip']").tooltip();
 
-		$("a.btn.emptycart").on("click", function(e)
+		$(this).on("click", "a.btn.emptycart", function(e)
 		{
 			var $this = $(this);
 			$this.addClass("active").prop("disabled", true);
@@ -58,65 +58,79 @@
 			}
 
 			$.ajax({
-				"dataType": "json",
-				"url": $this.attr("href"),
-				"success": function(data, textStatus, jqXHR){
+				dataType: "json",
+				url: $this.attr("href"),
+				success: function(data, textStatus, jqXHR){
 					refreshCartHtml();
 				},
-				"error": function(jqXHR, textStatus, errorThrown){
+				error: function(jqXHR, textStatus, errorThrown){
 					window.alert("".concat("Impossible de vider le panier (", textStatus, ", ", errorThrown, ")."));
 				},
-				"complete": function(jqXHR, textStatus){
+				complete: function(jqXHR, textStatus){
 					$this.removeClass("active").prop("disabled", false);
 				}
 			});
 			e.preventDefault();
 		});
 
-		$("a.btn.addtocart").on("click", function(e)
+		$(this).on("click", "a.btn.addtocart", function(e)
 		{
 			var $this = $(this);
 			$this.addClass("active").prop("disabled", true);
 
 			$.ajax({
-				"dataType": "json",
-				"url": $this.attr("href"),
-				"success": function(data, textStatus, jqXHR){
+				dataType: "json",
+				url: $this.attr("href"),
+				success: function(data, textStatus, jqXHR){
 					if (data == 2) {
 						window.alert("Cet élement est déjà dans le panier.");
 					}
-					$("i.fa", $this).removeClass("fa-shopping-cart").addClass("fa-check");
+					if (data != 0) {
+						$this
+							.removeClass("addtocart btn-outline-success")
+							.addClass("removefromcart btn-outline-danger")
+							.attr("href", "?removefromcart")
+							.find("span")
+								.text("Retirer");
+					}
 					refreshCartHtml();
 				},
-				"error": function(jqXHR, textStatus, errorThrown){
+				error: function(jqXHR, textStatus, errorThrown){
 					window.alert("".concat("Impossible d'ajouter l'élément au panier (", textStatus, ", ", errorThrown, ")."));
 				},
-				"complete": function(jqXHR, textStatus){
+				complete: function(jqXHR, textStatus){
 					$this.removeClass("active").prop("disabled", false);
 				}
 			});
 			e.preventDefault();
 		});
 
-		$("a.btn.removefromcart").on("click", function(e)
+		$(this).on("click", "a.btn.removefromcart", function(e)
 		{
 			var $this = $(this);
 			$this.addClass("active").prop("disabled", true);
 
 			$.ajax({
-				"dataType": "json",
-				"url": $this.attr("href"),
-				"success": function(data, textStatus, jqXHR){
+				dataType: "json",
+				url: $this.attr("href"),
+				success: function(data, textStatus, jqXHR){
 					if (data == -1) {
 						window.alert("Cet élement fait partie d'un dossier parent déjà ajouté au panier. Il ne peut être retiré individuellement.");
 					}
-					$("i.fa", $this).removeClass("fa-shopping-cart").addClass("fa-check");
+					else {
+						$this
+							.removeClass("removefromcart btn-outline-danger")
+							.addClass("addtocart btn-outline-success")
+							.attr("href", "?addtocart")
+							.find("span")
+								.text("Ajouter");
+					}
 					refreshCartHtml();
 				},
-				"error": function(jqXHR, textStatus, errorThrown){
+				error: function(jqXHR, textStatus, errorThrown){
 					window.alert("".concat("Impossible d'ajouter l'élément au panier (", textStatus, ", ", errorThrown, ")."));
 				},
-				"complete": function(jqXHR, textStatus){
+				complete: function(jqXHR, textStatus){
 					$this.removeClass("active").prop("disabled", false);
 				}
 			});
@@ -127,16 +141,16 @@
 			var $this = $(this);
 			var format = $this.is("pre") ? "text" : "html";
 			$.ajax({
-				"dataType": format,
-				"url": "?mediainfo&format=" + format,
-				"success": function(data, textStatus, jqXHR){
+				dataType: format,
+				url: "?mediainfo&format=" + format,
+				success: function(data, textStatus, jqXHR){
 					$this.removeClass("text-danger");
 					if (format === "html")
 						$this.html(data);
 					else
 						$this.text(data);
 				},
-				"error": function(jqXHR, textStatus, errorThrown){
+				error: function(jqXHR, textStatus, errorThrown){
 					var errorMessage = jqXHR.responseText || textStatus;
 					window.alert("".concat("Impossible de récupérer les infos du média (", errorMessage, ")."));
 					$this.text(errorMessage).addClass("text-danger");
@@ -144,14 +158,14 @@
 			});
 		});
 
-		$("select.ratio").on("change", function(e){
+		$(this).on("change", "select.ratio", function(e){
 			var $this = $(this);
 			var $target = $(".embed-responsive");
 			var className = "embed-responsive-".concat($this.val());
 			$target.removeClassPrefix("embed-responsive-").addClass(className);
 		});
-		
-		$("select.ssl").on("change", function(e){
+
+		$(this).on("change", "select.ssl", function(e){
 			var $this = $(this);
 			var $target = $("#player");
 			var src = $this.val();
@@ -170,26 +184,32 @@
 		});
 
 		$("#dir").DataTable({
-			"info": false,
-			"paging": false,
-			"searching": false,
-			"processing": false,
-			"stateSave": true,
-			"stateDuration": 0,
-			"columnDefs": [
+			info: false,
+			paging: false,
+			searching: false,
+			processing: false,
+			ordering: true,
+			stateSave: true,
+			stateDuration: 0,
+			autoWidth: false
+			/*columnDefs: [
 				{
-					"targets": [ 0, 2, 3 ],
-					"searchable": false
+					targets: "_all",
+					orderable: false,
+					searchable: false
 				},
 				{
-					"targets": [ 4 ],
-					"orderable": false,
-					"searchable": false
+					targets: "col-name",
+					searchable: true
+				},
+				{
+					targets: [ "col-name", "col-date" ],
+					orderable: true
 				}
 			],
-			"order": [
-				[ 1, "asc" ]
-			]
+			order: [
+				[ "col-name", "asc" ]
+			]*/
 		});
 	});
 

@@ -19,10 +19,10 @@
 		<div class="card mi-track">
 			<xsl:choose>
 				<xsl:when test="@streamid">
-					<h3 class="card-header"><xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="@streamid"/></h3>
+					<h2 class="card-header display-4"><xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="@streamid"/></h2>
 				</xsl:when>
 				<xsl:otherwise>
-					<h3 class="card-header"><xsl:value-of select="@type"/></h3>
+					<h2 class="card-header display-4"><xsl:value-of select="@type"/></h2>
 				</xsl:otherwise>
 			</xsl:choose>
 			<div class="card-block">

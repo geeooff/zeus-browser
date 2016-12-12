@@ -113,12 +113,18 @@ else if (isset($_GET['mediainfo']))
 }
 else if (isset($_GET['url']))
 {
+	if (!$end->exists)
+		http_die("Le fichier n'existe plus", 404);
+
 	header('Content-Type: text/plain; charset=utf-8', TRUE);
 	header('Content-Disposition: inline', TRUE);
 	echo $end->GetSecureLink();
 }
 else if (isset($_GET['urls']))
 {
+	if (!$end->exists)
+		http_die("Le dossier n'existe plus", 404);
+
 	header('Content-Type: text/plain; charset=utf-8', TRUE);
 	header('Content-Disposition: inline; filename=urls.txt', TRUE);
 
@@ -129,6 +135,9 @@ else if (isset($_GET['urls']))
 }
 else if (isset($_GET['m3u']))
 {
+	if (!$end->exists)
+		http_die("Le fichier ou le dossier n'existe plus", 404);
+
 	header('Content-Type: application/x-mpegurl; charset=utf-8', TRUE);
 	header('Content-Disposition: attachment; filename=playlist.m3u8', TRUE);
 
@@ -139,6 +148,9 @@ else if (isset($_GET['m3u']))
 }
 else if (isset($_GET['asx']))
 {
+	if (!$end->exists)
+		http_die("Le fichier ou le dossier n'existe plus", 404);
+
 	header('Content-Type: application/asx; charset=utf-8', TRUE);
 	header('Content-Disposition: attachment; filename=playlist.asx', TRUE);
 
@@ -179,8 +191,20 @@ else if (isset($_GET['cartasx']))
 }
 else if (isset($_GET['addtocart']))
 {
+	if (!$end->exists)
+		http_die("Le fichier ou le dossier n'existe plus", 404);
+
 	header('Content-Type: application/json; charset=utf-8', TRUE);
 	$retvalue = $cart->Add($end);
+	echo json_encode($retvalue);
+}
+else if (isset($_GET['removefromcart']))
+{
+	if (!$end->exists)
+		http_die("Le fichier ou le dossier n'existe plus", 404);
+
+	header('Content-Type: application/json; charset=utf-8', TRUE);
+	$retvalue = $cart->Remove($end);
 	echo json_encode($retvalue);
 }
 else if (isset($_GET['emptycart']))
@@ -189,21 +213,15 @@ else if (isset($_GET['emptycart']))
 	$retvalue = $cart->EmptyCart();
 	echo json_encode($retvalue);
 }
-else if (isset($_GET['removefromcart']))
-{
-	header('Content-Type: application/json; charset=utf-8', TRUE);
-	$retvalue = $cart->Remove($end);
-	echo json_encode($retvalue);
-}
 else if (isset($_GET['fullcarthtml']))
 {
 	header('Content-Type: text/html; charset=utf-8', TRUE);
-	echo $cart->GetFullHtml();
+	echo $cart->GetFullHtml($end);
 }
 else if (isset($_GET['lightcarthtml']))
 {
 	header('Content-Type: text/html; charset=utf-8', TRUE);
-	echo $cart->GetLightHtml();
+	echo $cart->GetLightHtml($end);
 }
 else
 {
@@ -211,7 +229,6 @@ else
 	header('Content-Type: text/html; charset=utf-8', TRUE);
 	
 	include '_header.inc.php';
-	include '_object.inc.php';
 
 	if (isset($_GET['cart']))
 	{
@@ -219,16 +236,21 @@ else
 		$allFiles = $cart->GetAllFiles();
 		include '_cart.inc.php';
 	}
-	else if ($end->exists)
+	else
 	{
-		if ($end->isdir)
+		include '_object.inc.php';
+		
+		if ($end->exists)
 		{
-			$end->GetChildren();
-			include '_dir.inc.php';
-		}
-		else if ($end->isfile)
-		{
-			include '_file.inc.php';
+			if ($end->isdir)
+			{
+				$end->GetChildren();
+				include '_dir.inc.php';
+			}
+			else if ($end->isfile)
+			{
+				include '_file.inc.php';
+			}
 		}
 	}
 

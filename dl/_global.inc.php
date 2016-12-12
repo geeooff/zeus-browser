@@ -438,7 +438,7 @@ class FileSystemObjectCart
 	public $objects;
 	public $allFiles;
 
-	public function __construct($builder, $sessionName)
+	public function __construct(FileSystemObjectBuilder $builder, $sessionName)
 	{
 		session_set_cookie_params(0, $builder->config['APP_PATH'], '', $builder->config['session']['secure'], FALSE);
 		session_start();
@@ -466,7 +466,7 @@ class FileSystemObjectCart
 		return TRUE;
 	}
 
-	public function Add($object)
+	public function Add(FileSystemObject $object)
 	{
 		if ($object !== NULL)
 		{
@@ -499,7 +499,7 @@ class FileSystemObjectCart
 		return 0;
 	}
 
-	public function Remove($object)
+	public function Remove(FileSystemObject $object)
 	{
 		if ($object !== NULL)
 		{
@@ -528,7 +528,7 @@ class FileSystemObjectCart
 		return 0;
 	}
 
-	public function Contains($object)
+	public function Contains(FileSystemObject $object)
 	{
 		if ($object !== NULL)
 		{
@@ -643,7 +643,7 @@ class FileSystemObjectCart
 		return $this->allFiles[$filterMediaType];
 	}
 
-	public function GetFullHtml()
+	public function GetFullHtml(FileSystemObject $object)
 	{
 		$objects = $this->GetObjects();
 
@@ -708,11 +708,24 @@ class FileSystemObjectCart
 		}
 	}
 
-	public function GetLightHtml()
+	public function GetLightHtml(FileSystemObject $object)
 	{
 		$objects = $this->GetObjects();
+		$isEmpty = !(count($objects) > 0);
+		$isInCart = (!$isEmpty && $object->exists) ? $this->Contains($object) : FALSE;
 
-		echo '<a href="?cart" type="text/html" class="btn btn-secondary">Panier <span class="tag tag-default tag-pill">', count($objects), '</span></a>';
+		if ($isInCart)
+			echo '<a href="?removefromcart" type="application/json" class="btn btn-outline-danger removefromcart" role="button"><i class="fa fa-shopping-cart"></i> <span class="hidden-xs-down">Retirer</span></a>', "\r\n";
+		else
+			echo '<a href="?addtocart" type="application/json" class="btn btn-outline-success addtocart" role="button"><i class="fa fa-shopping-cart"></i> <span class="hidden-xs-down">Ajouter</span></a>', "\r\n";
+
+		if (!$isEmpty)
+		{
+			echo '<a href="?cart" type="text/html" class="btn ', $isEmpty ? 'btn-outline-secondary disabled': 'btn-outline-primary', '">', "\r\n";
+			echo "\t", '<span class="hidden-xs-down">Panier</span>', "\r\n";
+			echo "\t", '<span class="tag tag-info tag-pill">', count($objects), '</span>', "\r\n";
+			echo '</a>', "\r\n";
+		}
 	}
 }
 
