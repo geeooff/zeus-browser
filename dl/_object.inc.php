@@ -43,6 +43,7 @@
 						echo '</p>', "\r\n"; 
 					}
 				?>
+				<?php if ($builder->userisadmin): ?>
 				<div class="btn-group btn-group-sm">
 					<button type="button" class="btn btn-outline-danger dropdown-toggle" data-toggle="dropdown">
 						<i class="fa fa-bug"></i> Debug
@@ -60,6 +61,7 @@
 						<?php endif; ?>
 					</div>
 				</div>
+				<?php endif; ?>
 			</div>
 		</div>
 		<div class="container">
