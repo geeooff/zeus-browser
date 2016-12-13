@@ -23,7 +23,10 @@ class FileSystemObject
 	public $isfile;
 	public $filesize;
 	public $mtime;
-	public $children;
+	public $children = NULL;
+	private $siblingsinit = FALSE;
+	public $prevsibling;
+	public $nextsibling;
 	public $extension;
 	public $mediatype;
 	public $mediaicon;
@@ -31,7 +34,7 @@ class FileSystemObject
 	public $mimetype;
 	public $playermimetype;
 
-	public function __construct($builder, $name, $parent, $uri, $path, $realpath, $securepath)
+	public function __construct(FileSystemObjectBuilder $builder, $name, $parent, $uri, $path, $realpath, $securepath)
 	{
 		$exists = file_exists($realpath);
 		$isdir = $exists ? is_dir($realpath) : FALSE;
@@ -58,7 +61,6 @@ class FileSystemObject
 		$this->isfile = $isfile;
 		$this->filesize = $filesize;
 		$this->mtime = $mtime;
-		$this->children = NULL;
 		$this->extension = $extension;
 		$this->mediatype = $mediatype;
 		$this->mediaicon = $mediaicon;
@@ -73,7 +75,7 @@ class FileSystemObject
 			if ($this->isdir && $this->exists)
 			{
 				$this->children = [];
-				$scan = scandir($this->realpath);
+				$scan = scandir($this->realpath); // asc/desc order ?
 				$scanfiltered = array_diff($scan, $this->builder->skip);
 				foreach ($scanfiltered as $name)
 				{
@@ -84,6 +86,56 @@ class FileSystemObject
 			}
 		}
 		return $this->children;
+	}
+
+	public function GetSiblings()
+	{
+		/*if (!$this->siblingsinit)
+		{
+			if ($this->parent !== NULL)
+			{
+				if ($this->parent->children !== NULL)
+				{
+					if (($key = array_search($this, $this->parent->children)) !== FALSE)
+					{
+
+					}
+				}
+				else
+				{
+					$scan = scandir($this->parent->realpath); // asc/desc order ?
+					$scanfiltered = array_diff($scan, $this->builder->skip);
+					
+					$previous = FALSE;
+					$next = FALSE;
+					
+					foreach ($scanfiltered as $name)
+					{
+						if ($name == $this->name)
+						{
+							$current = current($scanfiltered);
+							$next = next($scanfiltered);
+							break;
+						}
+						$previous = $name;
+					}
+
+					if ($previous !== FALSE)
+						$this->prevsibling = $this->builder->CreateChild($this->parent, $previous);
+					
+					if ($next !== FALSE)
+						$this->nextsibling = $this->builder->CreateChild($this->parent, $next);
+				}
+			}
+			else
+			{
+				$this->prevsibling = NULL;
+				$this->nextsibling = NULL;
+			}
+
+			$siblingsinit = TRUE;
+		}*/
+		return TRUE;
 	}
 
 	public function GetAllFiles($filterMediaType = NULL)

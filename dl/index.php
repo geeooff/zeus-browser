@@ -242,6 +242,8 @@ else
 		
 		if ($end->exists)
 		{
+			$end->GetSiblings();
+
 			if ($end->isdir)
 			{
 				$end->GetChildren();
