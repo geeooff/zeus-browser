@@ -16,17 +16,17 @@ class FileSystemObject
 	public $path;
 	public $realpath;
 	public $securepath;
+	public $exists;
+	public $children = NULL;
+	private $siblings = FALSE;
+	public $prev;
+	public $next;
 	private $securelink_md5;
 	private $securelink_expires;
-	public $exists;
 	public $isdir;
 	public $isfile;
 	public $filesize;
 	public $mtime;
-	public $children = NULL;
-	private $siblingsinit = FALSE;
-	public $prevsibling;
-	public $nextsibling;
 	public $extension;
 	public $mediatype;
 	public $mediaicon;
@@ -46,9 +46,7 @@ class FileSystemObject
 		$mediaicon = $builder->mediaicons[$mediatype];
 		$mimetype = ($isfile && isset($builder->mimetypes[$extension])) ? $builder->mimetypes[$extension] : NULL;
 		$playermimetype = ($isfile && $mimetype != NULL && isset($builder->playermimetypes[$mimetype])) ? $builder->playermimetypes[$mimetype] : NULL;
-
 		$pathsuffix = $isdir ? '/' : '';
-
 		$this->builder = $builder;
 		$this->name = $name;
 		$this->parent = $parent;
@@ -90,52 +88,42 @@ class FileSystemObject
 
 	public function GetSiblings()
 	{
-		/*if (!$this->siblingsinit)
+		if (!$this->siblings)
 		{
-			if ($this->parent !== NULL)
+			if ($this->exists && $this->parent !== NULL)
 			{
-				if ($this->parent->children !== NULL)
-				{
-					if (($key = array_search($this, $this->parent->children)) !== FALSE)
-					{
+				$scan = scandir($this->parent->realpath); // asc/desc order ?
+				$scanfiltered = array_diff($scan, $this->builder->skip);
+				$keys = array_keys($scanfiltered);
 
-					}
-				}
-				else
+				if (($key = array_search($this->name, $scanfiltered)) !== FALSE
+					&& ($index = array_search($key, $keys)) !== FALSE)
 				{
-					$scan = scandir($this->parent->realpath); // asc/desc order ?
-					$scanfiltered = array_diff($scan, $this->builder->skip);
-					
-					$previous = FALSE;
-					$next = FALSE;
-					
-					foreach ($scanfiltered as $name)
-					{
-						if ($name == $this->name)
-						{
-							$current = current($scanfiltered);
-							$next = next($scanfiltered);
-							break;
-						}
-						$previous = $name;
-					}
+					$maxIndex = count($keys) - 1;
 
-					if ($previous !== FALSE)
-						$this->prevsibling = $this->builder->CreateChild($this->parent, $previous);
-					
-					if ($next !== FALSE)
-						$this->nextsibling = $this->builder->CreateChild($this->parent, $next);
+					if ($index > 0)
+					{
+						$previousKey = $keys[$index - 1];
+						$previous = $scanfiltered[$previousKey];
+						$this->prev = $this->builder->CreateChild($this->parent, $previous);
+					}
+					if ($index < $maxIndex)
+					{
+						$nextKey = $keys[$index + 1];
+						$next = $scanfiltered[$nextKey];
+						$this->next = $this->builder->CreateChild($this->parent, $next);
+					}
 				}
 			}
 			else
 			{
-				$this->prevsibling = NULL;
-				$this->nextsibling = NULL;
+				$this->prev = NULL;
+				$this->next = NULL;
 			}
 
-			$siblingsinit = TRUE;
-		}*/
-		return TRUE;
+			$this->siblings = TRUE;
+		}
+		return $this->siblings;
 	}
 
 	public function GetAllFiles($filterMediaType = NULL)

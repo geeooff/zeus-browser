@@ -12,6 +12,7 @@
 
 	$(document).ready(function(){
 
+		var $document = $(this);
 		var $carts = $(".cart");
 		var $fullCarts = $carts.filter(".cart-full");
 		var $lightCarts = $carts.filter(".cart-light");
@@ -45,9 +46,11 @@
 			}
 		}
 
-		$("[data-toggle='tooltip']").tooltip();
+		$("[data-toggle='tooltip']").tooltip({
+			container: 'body'
+		});
 
-		$(this).on("click", "a.btn.emptycart", function(e)
+		$document.on("click", "a.btn.emptycart", function(e)
 		{
 			var $this = $(this);
 			$this.addClass("active").prop("disabled", true);
@@ -73,7 +76,7 @@
 			e.preventDefault();
 		});
 
-		$(this).on("click", "a.btn.addtocart", function(e)
+		$document.on("click", "a.btn.addtocart", function(e)
 		{
 			var $this = $(this);
 			$this.addClass("active").prop("disabled", true);
@@ -105,7 +108,7 @@
 			e.preventDefault();
 		});
 
-		$(this).on("click", "a.btn.removefromcart", function(e)
+		$document.on("click", "a.btn.removefromcart", function(e)
 		{
 			var $this = $(this);
 			$this.addClass("active").prop("disabled", true);
@@ -158,14 +161,14 @@
 			});
 		});
 
-		$(this).on("change", "select.ratio", function(e){
+		$document.on("change", "select.ratio", function(e){
 			var $this = $(this);
 			var $target = $(".embed-responsive");
 			var className = "embed-responsive-".concat($this.val());
 			$target.removeClassPrefix("embed-responsive-").addClass(className);
 		});
 
-		$(this).on("change", "select.ssl", function(e){
+		$document.on("change", "select.ssl", function(e){
 			var $this = $(this);
 			var $target = $("#player");
 			var src = $this.val();
@@ -180,6 +183,29 @@
 				$target.each(function(index){
 					this.load();
 				});
+			}
+		});
+
+		$document.on("keydown", function(e){
+			if (e.target == document.body && e.ctrlKey === true) {
+				var $btn = $([]);
+				switch (e.key) {
+					case "ArrowUp":
+						$btn = $("#btn-parent");
+						break;
+					case "ArrowLeft":
+						$btn = $("#btn-prev");
+						break;
+					case "ArrowRight":
+						$btn = $("#btn-next");
+						break;
+				}
+				if ($btn.length) {
+					var href = $btn.attr("href");
+					if (href) {
+						document.location.href = href;
+					}
+				}
 			}
 		});
 

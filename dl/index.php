@@ -238,12 +238,12 @@ else
 	}
 	else
 	{
+		$end->GetSiblings();
+
 		include '_object.inc.php';
 		
 		if ($end->exists)
 		{
-			$end->GetSiblings();
-
 			if ($end->isdir)
 			{
 				$end->GetChildren();

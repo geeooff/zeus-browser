@@ -67,15 +67,32 @@
 		<div class="container">
 			<div id="header-toolbar">
 				<?php
-					$parent = $end->exists ? $end->parent : $end->GetFirstExistantAncestor();
-					if ($parent != null)
-					{
-						echo '<div class="btn-group">', "\r\n";
-						echo "\t", '<a href="', $parent->uri, '" type="text/html" class="btn btn-outline-primary"><i class="fa fa-chevron-up"></i> <span class="hidden-xs-down">', html_encode($parent->name), '</span></a>', "\r\n";
-						echo '</div>', "\r\n";
-					}
 					if ($end->exists)
 					{
+						echo '<div class="btn-toolbar">', "\r\n";
+						echo "\t", '<div class="btn-group">', "\r\n";
+
+						if ($end->parent !== NULL)
+							echo "\t\t", '<a id="btn-parent" href="', $end->parent->uri, '" type="text/html" class="btn btn-outline-primary" title="', html_encode($end->parent->name), '" data-toggle="tooltip" data-placement="top"><i class="fa fa-arrow-up"></i></a>', "\r\n";
+						else
+							echo "\t\t", '<a class="btn btn-outline-secondary disabled" title="Aucun dossier parent"><i class="fa fa-arrow-up"></i></a>', "\r\n";
+
+						echo "\t", '</div>', "\r\n";
+						echo "\t", '<div class="btn-group">', "\r\n";
+
+						if ($end->prev !== NULL)
+							echo "\t\t", '<a id="btn-prev" href="', $end->prev->uri, '" type="text/html" class="btn btn-outline-primary" title="', html_encode($end->prev->name), '" data-toggle="tooltip" data-placement="top"><i class="fa fa-arrow-left"></i></a>', "\r\n";
+						else
+							echo "\t\t", '<a class="btn btn-outline-secondary disabled" title="Aucun fichier/dossier précédent"><i class="fa fa-arrow-left"></i></a>', "\r\n";
+
+						if ($end->next !== NULL)
+							echo "\t\t", '<a id="btn-next" href="', $end->next->uri, '" type="text/html" class="btn btn-outline-primary" title="', html_encode($end->next->name), '" data-toggle="tooltip" data-placement="top"><i class="fa fa-arrow-right"></i></a>', "\r\n";
+						else
+							echo "\t\t", '<a class="btn btn-outline-secondary disabled" title="Aucun fichier/dossier suivant"><i class="fa fa-arrow-right"></i></a>', "\r\n";
+
+						echo "\t", '</div>', "\r\n";
+						echo '</div>', "\r\n";
+
 						if ($end->isdir)
 						{
 							echo '<div class="btn-toolbar">', "\r\n";
@@ -138,6 +155,17 @@
 							echo "\t\t", '<a class="dropdown-item" href="?m3u" type="application/x-mpegurl">Format M3U</a>', "\r\n";
 							echo "\t\t", '<a class="dropdown-item" href="?asx" type="application/asx">Format ASX</a>', "\r\n";
 							echo "\t", '</div>', "\r\n";
+							echo '</div>', "\r\n";
+						}
+					}
+					else
+					{
+						$parent = $end->GetFirstExistantAncestor();
+
+						if ($parent !== NULL)
+						{
+							echo '<div class="btn-group">', "\r\n";
+							echo "\t", '<a href="', $parent->uri, '" type="text/html" class="btn btn-outline-primary" title="', html_encode($parent->name), '" data-toggle="tooltip" data-placement="top"><i class="fa fa-arrow-up"></i></a>', "\r\n";
 							echo '</div>', "\r\n";
 						}
 					}
