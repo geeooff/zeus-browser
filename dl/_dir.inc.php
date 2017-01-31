@@ -11,7 +11,7 @@ isset($end) or die(':P');
 						<th class="col-name">Nom</th>
 						<th class="col-size">Taille</th>
 						<th class="col-date">Date</th>
-						<!--<th class="col-actions hidden-sm-down">&nbsp;</th>-->
+						<th class="col-actions hidden-sm-down">&nbsp;</th>
 					</tr>
 				</thead>
 			<?php foreach ($end->children as $index => $child): ?>
@@ -30,7 +30,7 @@ isset($end) or die(':P');
 							<?= html_encode(format_datetime_full($child->mtime)) ?>
 						</span>
 					</td>
-					<!--<td class="col-actions hidden-sm-down">&nbsp;</td>-->
+					<td class="col-actions hidden-sm-down"><div class="cart cart-light"><?= $cart->GetObjectActionButton($child) ?></div></td>
 				</tr>
 			<?php endforeach; ?>
 			</table>

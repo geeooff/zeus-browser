@@ -15,14 +15,15 @@
     "url": "https://github.com/geeooff/zeus-browser.git"
   },
   "devDependencies": {
-    "autoprefixer": "^6.5.3",
+    "autoprefixer": "^6.6.0",
+    "bower": "^1.8.0",
     "del": "^2.2.2",
-    "eslint": "^3.12.1",
+    "eslint": "^3.12.2",
     "gulp": "^3.9.1",
     "gulp-concat": "^2.6.1",
     "gulp-postcss": "^6.2.0",
     "gulp-rename": "^1.2.2",
-    "gulp-sass": "^2.3.2",
+    "gulp-sass": "^3.0.0",
     "gulp-sequence": "^0.4.6",
     "gulp-sourcemaps": "^1.9.1",
     "gulp-uglify": "^2.0.0",

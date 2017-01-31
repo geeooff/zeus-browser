@@ -596,6 +596,15 @@ class FileSystemObjectCart
 		return FALSE;
 	}
 
+	public function CountObjects()
+	{
+		if ($this->uris !== NULL)
+		{
+			return count($this->uris);
+		}
+		return 0;
+	}
+
 	public function GetObjects()
 	{
 		if (!isset($this->objects))
@@ -748,24 +757,38 @@ class FileSystemObjectCart
 		}
 	}
 
-	public function GetLightHtml(FileSystemObject $object)
+	public function GetHeaderActionButton(FileSystemObject $object)
 	{
-		$objects = $this->GetObjects();
-		$isEmpty = !(count($objects) > 0);
+		$count = $this->CountObjects();
+		$isEmpty = !($count > 0);
 		$isInCart = (!$isEmpty && $object->exists) ? $this->Contains($object) : FALSE;
 
+		$html = '';
+
 		if ($isInCart)
-			echo '<a href="?removefromcart" type="application/json" class="btn btn-outline-danger removefromcart" role="button"><i class="fa fa-shopping-cart"></i> <span class="hidden-xs-down">Retirer</span></a>', "\r\n";
+			$html .= '<a href="?removefromcart&header" type="application/json" class="btn btn-outline-danger removefromcart" role="button"><i class="fa fa-shopping-cart"></i> <span class="hidden-xs-down">Retirer</span></a>' . "\r\n";
 		else
-			echo '<a href="?addtocart" type="application/json" class="btn btn-outline-success addtocart" role="button"><i class="fa fa-shopping-cart"></i> <span class="hidden-xs-down">Ajouter</span></a>', "\r\n";
+			$html .= '<a href="?addtocart&header" type="application/json" class="btn btn-outline-success addtocart" role="button"><i class="fa fa-shopping-cart"></i> <span class="hidden-xs-down">Ajouter</span></a>' . "\r\n";
 
 		if (!$isEmpty)
 		{
-			echo '<a href="?cart" type="text/html" class="btn ', $isEmpty ? 'btn-outline-secondary disabled': 'btn-outline-primary', '">', "\r\n";
-			echo "\t", '<span class="hidden-xs-down">Panier</span>', "\r\n";
-			echo "\t", '<span class="tag tag-info tag-pill">', count($objects), '</span>', "\r\n";
-			echo '</a>', "\r\n";
+			$html .= '<a href="?cart" type="text/html" class="btn ' . ($isEmpty ? 'btn-outline-secondary disabled': 'btn-outline-primary') . '">' . "\r\n";
+			$html .= "\t" . '<span class="hidden-xs-down">Panier</span>' . "\r\n";
+			$html .= "\t" . '<span class="tag tag-info tag-pill">' . $count . '</span>' . "\r\n";
+			$html .= '</a>' . "\r\n";
 		}
+
+		return $html;
+	}
+
+	public function GetObjectActionButton(FileSystemObject $object)
+	{
+		$isInCart = $this->Contains($object);
+
+		if ($isInCart)
+			return '<a href="' . $object->uri . '?removefromcart" type="application/json" class="btn btn-outline-danger removefromcart" role="button"><i class="fa fa-shopping-cart"></i> <span class="hidden-xs-down">Retirer</span></a>' . "\r\n";
+		else
+			return '<a href="' . $object->uri . '?addtocart" type="application/json" class="btn btn-outline-success addtocart" role="button"><i class="fa fa-shopping-cart"></i> <span class="hidden-xs-down">Ajouter</span></a>' . "\r\n";
 	}
 }
 

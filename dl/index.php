@@ -195,8 +195,18 @@ else if (isset($_GET['addtocart']))
 		http_die("Le fichier ou le dossier n'existe plus", 404);
 
 	header('Content-Type: application/json; charset=utf-8', TRUE);
-	$retvalue = $cart->Add($end);
-	echo json_encode($retvalue);
+
+	$fromHeaderButton = isset($_GET['header']);
+	$success = $cart->Add($end);
+	$html = $fromHeaderButton ? $cart->GetHeaderActionButton($end) : $cart->GetObjectActionButton($end);
+
+	$output = array(
+		'uri' => $end->uri,
+		'success' => $success,
+		'html' => $html
+	);
+
+	echo json_encode($output);
 }
 else if (isset($_GET['removefromcart']))
 {
@@ -204,8 +214,18 @@ else if (isset($_GET['removefromcart']))
 		http_die("Le fichier ou le dossier n'existe plus", 404);
 
 	header('Content-Type: application/json; charset=utf-8', TRUE);
-	$retvalue = $cart->Remove($end);
-	echo json_encode($retvalue);
+
+	$fromHeaderButton = isset($_GET['header']);
+	$success = $cart->Remove($end);
+	$html = $fromHeaderButton ? $cart->GetHeaderActionButton($end) : $cart->GetObjectActionButton($end);
+
+	$output = array(
+		'uri' => $end->uri,
+		'success' => $success,
+		'html' => $html
+	);
+
+	echo json_encode($output);
 }
 else if (isset($_GET['emptycart']))
 {
@@ -221,7 +241,7 @@ else if (isset($_GET['fullcarthtml']))
 else if (isset($_GET['lightcarthtml']))
 {
 	header('Content-Type: text/html; charset=utf-8', TRUE);
-	echo $cart->GetLightHtml($end);
+	echo $cart->GetHeaderActionButton($end);
 }
 else
 {

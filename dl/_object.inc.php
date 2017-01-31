@@ -170,6 +170,6 @@
 						}
 					}
 
-					echo '<div class="cart cart-light btn-group">', $cart->GetLightHtml($end), '</div>', "\r\n";
+					echo '<div class="cart cart-light btn-group">', $cart->GetHeaderActionButton($end), '</div>', "\r\n";
 				?>
 			</div>

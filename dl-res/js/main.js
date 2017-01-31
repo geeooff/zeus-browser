@@ -117,7 +117,7 @@
 				dataType: "json",
 				url: $this.attr("href"),
 				success: function(data, textStatus, jqXHR){
-					if (data == -1) {
+					if (data.success == -1) {
 						window.alert("Cet élement fait partie d'un dossier parent déjà ajouté au panier. Il ne peut être retiré individuellement.");
 					}
 					else {
@@ -217,25 +217,44 @@
 			ordering: true,
 			stateSave: true,
 			stateDuration: 0,
-			autoWidth: false
-			/*columnDefs: [
+			autoWidth: false,
+			stripeClasses: [],
+			orderClasses: false,
+			columnDefs: [
 				{
-					targets: "_all",
-					orderable: false,
+					name: "icon",
+					targets: "col-icon",
+					orderable: true,
 					searchable: false
 				},
 				{
+					name: "name",
 					targets: "col-name",
+					orderable: true,
 					searchable: true
 				},
 				{
-					targets: [ "col-name", "col-date" ],
-					orderable: true
-				}
+					name: "size",
+					targets: "col-size",
+					orderable: true,
+					searchable: false
+				},
+				{
+					name: "date",
+					targets: "col-date",
+					orderable: true,
+					searchable: false
+				},
+				{
+					name: "actions",
+					targets: "col-actions",
+					orderable: false,
+					searchable: false
+				},
 			],
 			order: [
-				[ "col-name", "asc" ]
-			]*/
+				[ 1, "asc" ]
+			]
 		});
 	});
 
