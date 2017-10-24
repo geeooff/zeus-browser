@@ -18,17 +18,18 @@ const src = {
 		'dl-res/css/main.scss'
 	],
 	bootstrapjs: [
-		'bower_components/bootstrap/js/dist/util.js',
-		'bower_components/bootstrap/js/dist/alert.js',
-		'bower_components/bootstrap/js/dist/button.js',
-		//'bower_components/bootstrap/js/dist/carousel.js',
-		//'bower_components/bootstrap/js/dist/collapse.js',
-		'bower_components/bootstrap/js/dist/dropdown.js',
-		'bower_components/bootstrap/js/dist/modal.js',
-		//'bower_components/bootstrap/js/dist/scrollspy.js',
-		//'bower_components/bootstrap/js/dist/tab.js',
-		'bower_components/bootstrap/js/dist/tooltip.js',
-		//'bower_components/bootstrap/js/dist/popover.js'
+		'node_modules/bootstrap/js/dist/util.js',
+		'node_modules/bootstrap/js/dist/alert.js',
+		'node_modules/bootstrap/js/dist/button.js',
+		//'node_modules/bootstrap/js/dist/carousel.js',
+		//'node_modules/bootstrap/js/dist/collapse.js',
+		'node_modules/bootstrap/js/dist/dropdown.js',
+		//'node_modules/bootstrap/js/dist/index.js',
+		'node_modules/bootstrap/js/dist/modal.js',
+		//'node_modules/bootstrap/js/dist/popover.js'
+		//'node_modules/bootstrap/js/dist/scrollspy.js',
+		//'node_modules/bootstrap/js/dist/tab.js',
+		'node_modules/bootstrap/js/dist/tooltip.js',
 	],
 	js: [
 		'dl-res/js/main.js'
@@ -43,14 +44,14 @@ const dest = {
 };
 const copies = {
 	js: [
-		'bower_components/jquery/dist/jquery.min.js',
-		'bower_components/tether/dist/js/tether.min.js',
-		//'bower_components/bootstrap/dist/js/bootstrap.min.js',
-		'bower_components/datatables.net/js/jquery.dataTables.min.js',
-		//'bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js',
+		'node_modules/jquery/dist/jquery.min.js',
+		'node_modules/popper.js/dist/popper.min.js',
+		//'node_modules/bootstrap/dist/js/bootstrap.min.js',
+		'node_modules/datatables.net/js/jquery.dataTables.js',
+		'node_modules/datatables.net-bs4/js/dataTables.bootstrap4.js',
 	],
 	fonts: [
-		'bower_components/font-awesome/fonts/**'
+		'node_modules/font-awesome/fonts/**'
 	]
 };
 const cleanDest = {
