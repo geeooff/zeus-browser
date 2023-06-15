@@ -1,4 +1,12 @@
-node_modules
-bower_components
-.vs
-.vscode
+node_modules/
+.vs/
+.vscode/
+
+dl-res/css/*
+!dl-res/css/main.css
+
+dl-res/fonts/*
+!dl-res/fonts/.gitkeep
+
+dl-res/js/*
+!dl-res/js/main.js

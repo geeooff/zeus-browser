@@ -10,7 +10,7 @@
 		return this;
 	};
 
-	$(document).ready(function(){
+	$(function(){
 
 		var $document = $(this);
 		var $carts = $(".cart");

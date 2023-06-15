@@ -1,21 +1,23 @@
+/// <binding BeforeBuild='build' Clean='clean' />
 'use strict';
 
-const autoprefixer = require('autoprefixer'),
-	cleancss = require('postcss-clean'),
-	concat = require('gulp-concat'),
-	del = require('del'),
-	gulp = require('gulp'),
-	gulpSequence = require('gulp-sequence'),
-	merge = require('merge-stream'),
-	postcss = require('gulp-postcss'),
-	rename = require('gulp-rename'),
-	sass = require('gulp-sass'),
-	sourcemaps = require('gulp-sourcemaps'),
-	uglify = require('gulp-uglify')
+const   del = require('del'),
+        gulp = require('gulp'),
+        autoprefixer = require('gulp-autoprefixer'),
+        cleanCss = require('gulp-clean-css'),
+        concat = require('gulp-concat'),
+        rename = require('gulp-rename'),
+        sass = require('gulp-sass')(require('sass')),
+        sourcemaps = require('gulp-sourcemaps'),
+        uglify = require('gulp-uglify'),
+        bootstrapPackage = require('./node_modules/bootstrap/package.json');
 
 const src = {
 	sass: [
 		'dl-res/css/main.scss'
+	],
+	css: [
+		'dl-res/css/main.css'
 	],
 	bootstrapjs: [
 		'node_modules/bootstrap/js/dist/util.js',
@@ -61,7 +63,9 @@ const cleanDest = {
 	],
 	js: [
 		'dl-res/js/*.min.js',
-		'dl-res/js/*.map'
+		'dl-res/js/*.map',
+		'dl-res/js/jquery.*.js',
+		'dl-res/js/dataTables.*.js'
 	],
 	fonts: [
 		'dl-res/fonts/**/*'
@@ -69,11 +73,7 @@ const cleanDest = {
 };
 
 const autoprefixerOptions = {
-	browsers: [
-		'last 1 version',
-		'> 10%',
-		'not ie <= 11'
-	]
+    browsers: bootstrapPackage.browserslist
 };
 
 const sassOptions = {
@@ -107,68 +107,111 @@ const renameMinOptions = {
 	suffix: '.min'
 };
 
-const watcherOnChange = function (event) {
-	console.log('Watcher: ' + event.path + ' (' + event.type + ')');
-};
+// js tasks
+//
 
-//const clearReadOnlyFlag = function (stream, file) {
-//	if ((file.stat.mode & 146) === 0) {
-//		file.stat.mode = file.stat.mode | 146;
-//	}
-//	return stream;
-//};
+function jsClean() {
+    return del(cleanDest.js);
+}
 
-//const errorHandler = function (err) {
-//	if (err) console.log(err);
-//};
-
-gulp.task('default', ['copy', 'css', 'js']);
-
-gulp.task('clean', function(){
-	return del([].concat(cleanDest.css, cleanDest.js, cleanDest.fonts));
-});
-
-gulp.task('copy', function(){
-	var jsCopy = gulp.src(copies.js)
+function jsCopy() {
+	return gulp.src(copies.js)
 		.pipe(gulp.dest(dest.js));
-	var fontsCopy = gulp.src(copies.fonts)
-		.pipe(gulp.dest(dest.fonts));
-	return merge(jsCopy, fontsCopy);
-});
+}
 
-gulp.task('css', function(){
-	return gulp.src(src.sass)
-		.pipe(sass(sassOptions).on('error', sass.logError))
-		.pipe(gulp.dest(dest.css))
-		.pipe(sourcemaps.init(mapsInitOptions))
-		.pipe(postcss([
-			autoprefixer(autoprefixerOptions),
-			cleancss(cleanCssOptions)
-		]))
-		.pipe(rename(renameMinOptions))
-		.pipe(sourcemaps.write(dest.maps, mapsWriteOptions))
-		.pipe(gulp.dest(dest.css));
-});
-
-gulp.task('js', ['js:bootstrap', 'js:main']);
-
-gulp.task('js:bootstrap', function(){
+function jsMinifyBootstrap() {
 	return gulp.src(src.bootstrapjs)
 		.pipe(concat(dest.bootstrapjs))
 		.pipe(uglify(uglifyOptions))
 		.pipe(gulp.dest(dest.js));
-});
+}
 
-gulp.task('js:main', function(){
+function jsMinifyMain() {
 	return gulp.src(src.js)
 		.pipe(sourcemaps.init(mapsInitOptions))
 		.pipe(uglify(uglifyOptions))
 		.pipe(rename(renameMinOptions))
 		.pipe(sourcemaps.write(dest.maps, mapsWriteOptions))
 		.pipe(gulp.dest(dest.js));
-});
+}
 
-gulp.task('watch', function(){
-	gulp.watch(src.sass, ['css']).on('change', watcherOnChange);
-	gulp.watch(src.js, ['js:main']).on('change', watcherOnChange);
-});
+const jsTask = gulp.series(
+	jsMinifyBootstrap,
+	jsMinifyMain
+);
+
+function jsWatch() {
+    return gulp.watch(src.js, jsTask);
+}
+
+// css tasks
+//
+
+function cssClean() {
+    return del(cleanDest.css);
+}
+
+function cssTranspile() {
+    return gulp.src(src.sass)
+        .pipe(sourcemaps.init(mapsInitOptions))
+        .pipe(sass(sassOptions).on('error', sass.logError))
+        .pipe(sourcemaps.write('.', mapsWriteOptions))
+        .pipe(gulp.dest(dest.css));
+}
+
+function cssMinify() {
+    return gulp.src(src.css)
+        .pipe(sourcemaps.init(mapsInitOptions))
+        .pipe(autoprefixer(autoprefixerOptions))
+        .pipe(cleanCss(cleanCssOptions))
+        .pipe(rename(renameMinOptions))
+        .pipe(sourcemaps.write('.', mapsWriteOptions))
+        .pipe(gulp.dest(dest.css));
+}
+
+function cssTranspileWatch() {
+    return gulp.watch(src.sass, cssTranspile);
+}
+
+function cssMinifyWatch() {
+    return gulp.watch(src.css, cssMinify);
+}
+
+// fonts tasks
+//
+
+function fontsClean() {
+	return del(cleanDest.fonts);
+}
+
+function fontsCopy() {
+	return gulp.src(copies.fonts)
+		.pipe(gulp.dest(dest.fonts));
+}
+
+// public tasks
+//
+
+exports.clean = gulp.parallel(cssClean, jsClean, fontsClean);
+
+exports.build = gulp.series(
+	gulp.parallel(
+		jsCopy,
+		fontsCopy
+	),
+    gulp.parallel(
+        jsTask,
+        gulp.series(
+            cssTranspile,
+            cssMinify
+        )
+    )
+);
+
+exports.watch = function() {
+    cssTranspileWatch();
+    cssMinifyWatch();
+    jsWatch();
+};
+
+exports.default = this.build;
